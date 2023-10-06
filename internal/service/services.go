@@ -1,6 +1,9 @@
 package service
 
-import "github.com/iot-thermometer/server/internal/repository"
+import (
+	"github.com/iot-thermometer/server/internal/dto"
+	"github.com/iot-thermometer/server/internal/repository"
+)
 
 type Services interface {
 	User() User
@@ -14,8 +17,8 @@ type services struct {
 	readingService Reading
 }
 
-func NewServices(repositories repository.Repositories) Services {
-	userService := newUserService()
+func NewServices(repositories repository.Repositories, config dto.Config) Services {
+	userService := newUserService(repositories.User(), config)
 	deviceService := newDeviceService()
 	readingService := newReadingService()
 	return &services{

@@ -31,7 +31,7 @@ func main() {
 	e.HidePort = true
 
 	repositories := repository.NewRepositories(db)
-	services := service.NewServices(repositories)
+	services := service.NewServices(repositories, config)
 	controllers := controller.NewControllers(services)
 	controllers.Route(e)
 
