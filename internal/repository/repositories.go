@@ -1,6 +1,10 @@
 package repository
 
-import "gorm.io/gorm"
+import (
+	"github.com/iot-thermometer/server/internal/model"
+	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
+)
 
 type Repositories interface {
 	User() User
@@ -14,7 +18,20 @@ type repositories struct {
 	readingRepository Reading
 }
 
-func NewRepositories(db gorm.DB) Repositories {
+func NewRepositories(db *gorm.DB) Repositories {
+	err := db.AutoMigrate(&model.User{})
+	if err != nil {
+		logrus.Panic(err)
+	}
+	err = db.AutoMigrate(&model.Device{})
+	if err != nil {
+		logrus.Panic(err)
+	}
+	err = db.AutoMigrate(&model.Reading{})
+	if err != nil {
+		logrus.Panic(err)
+	}
+
 	userRepository := newUserRepository(db)
 	deviceRepository := newDeviceRepository(db)
 	readingRepository := newReadingRepository(db)

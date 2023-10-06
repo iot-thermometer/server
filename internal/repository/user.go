@@ -6,10 +6,10 @@ type User interface {
 }
 
 type user struct {
-	db gorm.DB
+	db *gorm.DB
 }
 
-func newUserRepository(db gorm.DB) User {
+func newUserRepository(db *gorm.DB) User {
 	return &user{
 		db: db,
 	}

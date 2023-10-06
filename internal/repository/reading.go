@@ -6,10 +6,10 @@ type Reading interface {
 }
 
 type reading struct {
-	db gorm.DB
+	db *gorm.DB
 }
 
-func newReadingRepository(db gorm.DB) Reading {
+func newReadingRepository(db *gorm.DB) Reading {
 	return &reading{
 		db: db,
 	}
