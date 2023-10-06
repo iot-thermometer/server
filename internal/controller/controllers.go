@@ -43,6 +43,13 @@ func (c controllers) Reading() Reading {
 }
 
 func (c controllers) Route(e *echo.Echo) {
-	//TODO implement me
-	panic("implement me")
+	e.POST("/api/auth/login", c.userController.Login)
+	e.POST("/api/auth/register", c.userController.Register)
+
+	e.GET("/api/devices", c.deviceController.List)
+	e.POST("/api/devices", c.deviceController.Create)
+	e.PUT("/api/devices/:id", c.deviceController.Update)
+	e.DELETE("/api/devices/:id", c.deviceController.Delete)
+
+	e.GET("/api/devices/:id/readings", c.readingController.List)
 }
