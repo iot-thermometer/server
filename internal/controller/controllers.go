@@ -21,8 +21,8 @@ type controllers struct {
 
 func NewControllers(services service.Services) Controllers {
 	userController := newUserController(services.User())
-	deviceController := newDeviceController(services.Device())
-	readingController := newReadingController(services.Reading())
+	deviceController := newDeviceController(services.User(), services.Device())
+	readingController := newReadingController(services.User(), services.Reading())
 	return &controllers{
 		userController:    userController,
 		deviceController:  deviceController,

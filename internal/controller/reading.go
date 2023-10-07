@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/iot-thermometer/server/internal/service"
+	"github.com/iot-thermometer/server/internal/util"
 	"github.com/labstack/echo/v4"
 )
 
@@ -10,16 +11,25 @@ type Reading interface {
 }
 
 type reading struct {
+	userService    service.User
 	readingService service.Reading
 }
 
 func (r reading) List(c echo.Context) error {
-	//TODO implement me
-	panic("implement me")
+	userID, err := r.userService.DecodeToken(util.GetTokenFromContext(c))
+	if err != nil {
+		return err
+	}
+	readings, err := r.readingService.List(userID, util.ParseParamID(c.Param("id")))
+	if err != nil {
+		return err
+	}
+	return c.JSON(200, readings)
 }
 
-func newReadingController(readingService service.Reading) Reading {
+func newReadingController(userService service.User, readingService service.Reading) Reading {
 	return &reading{
+		userService:    userService,
 		readingService: readingService,
 	}
 }
