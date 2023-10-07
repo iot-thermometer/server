@@ -25,5 +25,12 @@ services:
       interval: 10s
       timeout: 60s
       retries: 5
+  broker:
+    image: eclipse-mosquitto
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
 volumes:
   db:

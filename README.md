@@ -36,3 +36,13 @@ DELETE /api/devices/:id
 ```
 GET /api/devices/:id/readings
 ```
+
+MQTT message:
+```
+{
+    "deviceId": 1,
+    "type": "TEMPERATURE",
+    "value": 0,
+    "time": 1696699342
+}
+```
