@@ -15,3 +15,24 @@ POST /api/auth/register
     "password": ""
 }
 ```
+```
+GET /api/devices
+```
+```
+POST /api/devices
+{
+    "name": ""
+}
+```
+```
+PUT /api/devices/:id
+{
+    "name": ""
+}
+```
+```
+DELETE /api/devices/:id
+```
+```
+GET /api/devices/:id/readings
+```
