@@ -38,7 +38,7 @@ GET /api/devices/:id/readings
 ```
 
 MQTT message:
-```
+```json
 {
     "deviceId": 1,
     "type": "TEMPERATURE",
