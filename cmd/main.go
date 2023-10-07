@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"github.com/iot-thermometer/server/internal/client"
 	"github.com/iot-thermometer/server/internal/controller"
 	"github.com/iot-thermometer/server/internal/dto"
 	"github.com/iot-thermometer/server/internal/repository"
@@ -21,7 +22,7 @@ func main() {
 		logrus.Info("Error loading .env file")
 	}
 
-	config := dto.Config{DSN: os.Getenv("DSN")}
+	config := dto.Config{DSN: os.Getenv("DSN"), Broker: os.Getenv("BROKER")}
 
 	db, err := gorm.Open(postgres.Open(config.DSN), &gorm.Config{})
 	if err != nil {
@@ -46,10 +47,16 @@ func main() {
 		}
 	})
 
+	clients := client.NewClients(config)
 	repositories := repository.NewRepositories(db)
 	services := service.NewServices(repositories, config)
 	controllers := controller.NewControllers(services)
 	controllers.Route(e)
+
+	err = clients.Broker().Connect("sensors", services.Reading().Handle)
+	if err != nil {
+		logrus.Panic(err)
+	}
 
 	port := os.Getenv("PORT")
 	if port == "" {

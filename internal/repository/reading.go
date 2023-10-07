@@ -7,6 +7,7 @@ import (
 
 type Reading interface {
 	List(deviceID uint) ([]model.Reading, error)
+	Create(reading model.Reading) (model.Reading, error)
 }
 
 type reading struct {
@@ -25,4 +26,11 @@ func (r reading) List(deviceID uint) ([]model.Reading, error) {
 		return nil, err
 	}
 	return readings, nil
+}
+
+func (r reading) Create(reading model.Reading) (model.Reading, error) {
+	if err := r.db.Create(&reading).Error; err != nil {
+		return model.Reading{}, err
+	}
+	return reading, nil
 }

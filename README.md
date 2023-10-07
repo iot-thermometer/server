@@ -40,9 +40,10 @@ GET /api/devices/:id/readings
 MQTT message:
 ```json
 {
-    "deviceId": 1,
+    "device_id": 1,
     "type": "TEMPERATURE",
     "value": 0,
     "time": 1696699342
 }
 ```
+MQTT topic: `sensors`

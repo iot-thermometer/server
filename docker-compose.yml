@@ -5,6 +5,7 @@ services:
     environment:
       DSN: host=db user=postgres password=jqKwlS9vN0mfm1v dbname=iot sslmode=disable
       SIGNING_SECRET: SecretYouShouldHide
+      BROKER: tcp://broker:1883
     depends_on:
       db:
         condition: service_healthy
