@@ -39,14 +39,16 @@ func (d device) List(userID uint) ([]model.Device, error) {
 
 func (d device) Create(userID uint, payload dto.CreateDeviceRequest) (model.Device, error) {
 	device := model.Device{
-		Name:  payload.Name,
-		Token: util.RandStringRunes(32),
+		Name:            payload.Name,
+		Token:           util.RandStringRunes(32),
+		ReadingInterval: payload.ReadingInterval,
+		PushInterval:    payload.PushInterval,
 	}
 	result, err := d.deviceRepository.Create(device)
 	if err != nil {
 		return model.Device{}, err
 	}
-	_, err = d.ownershipRepository.Create(userID, result.ID)
+	_, err = d.ownershipRepository.Create(userID, result.ID, model.OwnershipRoleOwner)
 	if err != nil {
 		return model.Device{}, err
 	}
@@ -66,6 +68,8 @@ func (d device) Update(userID uint, deviceID uint, payload dto.UpdateDeviceReque
 		return model.Device{}, err
 	}
 	device.Name = payload.Name
+	device.ReadingInterval = payload.ReadingInterval
+	device.PushInterval = payload.PushInterval
 	result, err := d.deviceRepository.Save(device)
 	if err != nil {
 		return model.Device{}, err
