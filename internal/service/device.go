@@ -14,6 +14,8 @@ type Device interface {
 	Update(userID uint, deviceID uint, payload dto.UpdateDeviceRequest) (model.Device, error)
 	Delete(userID uint, deviceID uint) error
 	Owns(userID uint, deviceID uint) (bool, error)
+
+	Get(token string) (model.Device, error)
 }
 
 type device struct {
@@ -94,6 +96,10 @@ func (d device) Delete(userID uint, deviceID uint) error {
 
 func (d device) Owns(userID uint, deviceID uint) (bool, error) {
 	return d.ownershipRepository.Exists(userID, deviceID)
+}
+
+func (d device) Get(token string) (model.Device, error) {
+	return d.deviceRepository.GetByToken(token)
 }
 
 func newDeviceService(ownershipRepository repository.Ownership, deviceRepository repository.Device) Device {

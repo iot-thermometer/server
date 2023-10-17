@@ -13,6 +13,8 @@ type Device interface {
 	Create(c echo.Context) error
 	Update(c echo.Context) error
 	Delete(c echo.Context) error
+
+	Config(c echo.Context) error
 }
 
 type device struct {
@@ -80,6 +82,14 @@ func (d device) Delete(c echo.Context) error {
 		return err
 	}
 	return c.NoContent(http.StatusNoContent)
+}
+
+func (d device) Config(c echo.Context) error {
+	device, err := d.deviceService.Get(c.Param("token"))
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, device)
 }
 
 func newDeviceController(userService service.User, deviceService service.Device) Device {

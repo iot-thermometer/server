@@ -7,6 +7,7 @@ import (
 
 type Device interface {
 	GetByID(id uint) (model.Device, error)
+	GetByToken(token string) (model.Device, error)
 	Create(device model.Device) (model.Device, error)
 	Save(device model.Device) (model.Device, error)
 	DeleteByID(id uint) error
@@ -25,6 +26,15 @@ func newDeviceRepository(db *gorm.DB) Device {
 func (d device) GetByID(id uint) (model.Device, error) {
 	var device model.Device
 	result := d.db.First(&device, id)
+	if result.Error != nil {
+		return model.Device{}, result.Error
+	}
+	return device, nil
+}
+
+func (d device) GetByToken(token string) (model.Device, error) {
+	var device model.Device
+	result := d.db.Where("token = ?", token).First(&device)
 	if result.Error != nil {
 		return model.Device{}, result.Error
 	}
