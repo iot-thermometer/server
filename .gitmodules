@@ -1,0 +1,3 @@
+[submodule "proto/thermometer-proto"]
+	path = proto/thermometer-proto
+	url = https://github.com/iot-thermometer/thermometer-proto
