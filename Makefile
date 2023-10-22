@@ -1,4 +1,5 @@
 gen:
-	protoc --go_out=. --go_opt=paths=source_relative \
-		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
+	mkdir -p gen
+	protoc --go_out=gen --go_opt=paths=source_relative \
+		--go-grpc_out=gen --go-grpc_opt=paths=source_relative \
 		--proto_path proto/proto thermometer.proto
