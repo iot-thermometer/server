@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"github.com/iot-thermometer/server/gen"
 	"github.com/iot-thermometer/server/internal/client"
 	"github.com/iot-thermometer/server/internal/controller"
 	"github.com/iot-thermometer/server/internal/dto"
@@ -17,6 +18,9 @@ import (
 )
 
 func main() {
+
+	gen.NewThermometerServiceClient(nil)
+
 	err := godotenv.Load()
 	if err != nil {
 		logrus.Info("Error loading .env file")
