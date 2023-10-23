@@ -11,6 +11,7 @@ services:
         condition: service_healthy
     ports:
       - "3009:3000"
+      - "3010:3001"
   db:
     image: postgres
     restart: always

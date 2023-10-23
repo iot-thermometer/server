@@ -2,10 +2,10 @@ package main
 
 import (
 	"errors"
-	"github.com/iot-thermometer/server/gen"
 	"github.com/iot-thermometer/server/internal/client"
 	"github.com/iot-thermometer/server/internal/controller"
 	"github.com/iot-thermometer/server/internal/dto"
+	"github.com/iot-thermometer/server/internal/procedure"
 	"github.com/iot-thermometer/server/internal/repository"
 	"github.com/iot-thermometer/server/internal/service"
 	"github.com/joho/godotenv"
@@ -14,12 +14,11 @@ import (
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"net"
 	"os"
 )
 
 func main() {
-
-	gen.NewThermometerServiceClient(nil)
 
 	err := godotenv.Load()
 	if err != nil {
@@ -57,15 +56,30 @@ func main() {
 	controllers := controller.NewControllers(services)
 	controllers.Route(e)
 
+	procedures := procedure.NewProcedures(services)
+
 	err = clients.Broker().Connect("sensors", services.Reading().Handle)
 	if err != nil {
 		logrus.Panic(err)
 	}
 
+	go func() {
+		grpcPort := os.Getenv("GRPC_PORT")
+		if grpcPort == "" {
+			grpcPort = "3001"
+		}
+		logrus.Info("Starting GRPC server on port " + grpcPort)
+		listener, err := net.Listen("tcp", ":"+grpcPort)
+		if err != nil {
+			logrus.Panic(err)
+		}
+		logrus.Fatal(procedures.Serve(listener))
+	}()
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "3000"
 	}
-	logrus.Info("Starting server on port " + port)
+	logrus.Info("Starting HTTP server on port " + port)
 	logrus.Fatal(e.Start(":" + port))
 }
