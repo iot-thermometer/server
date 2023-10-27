@@ -7,44 +7,40 @@ import (
 
 type server struct {
 	gen.UnimplementedThermometerServiceServer
+
+	userProcedure    User
+	deviceProcedure  Device
+	readingProcedure Reading
 }
 
 func (s server) Login(ctx context.Context, request *gen.LoginRequest) (*gen.LoginResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	return s.userProcedure.Login(request)
 }
 
 func (s server) Register(ctx context.Context, request *gen.RegisterRequest) (*gen.RegisterResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	return s.userProcedure.Register(request)
 }
 
-func (s server) GetDevices(ctx context.Context, request *gen.GetDevicesRequest) (*gen.GetDevicesResponse, error) {
-	//TODO implement me
-	panic("implement me")
+func (s server) ListDevices(ctx context.Context, request *gen.ListDevicesRequest) (*gen.ListDevicesResponse, error) {
+	return s.deviceProcedure.GetDevices(ctx, request)
 }
 
-func (s server) AddDevice(ctx context.Context, request *gen.AddDeviceRequest) (*gen.AddDeviceResponse, error) {
-	//TODO implement me
-	panic("implement me")
+func (s server) CreateDevice(ctx context.Context, request *gen.CreateDeviceRequest) (*gen.CreateDeviceResponse, error) {
+	return s.deviceProcedure.AddDevice(ctx, request)
 }
 
 func (s server) UpdateDevice(ctx context.Context, request *gen.UpdateDeviceRequest) (*gen.UpdateDeviceResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	return s.deviceProcedure.UpdateDevice(ctx, request)
 }
 
-func (s server) GetReadings(request *gen.GetReadingsRequest, readingsServer gen.ThermometerService_GetReadingsServer) error {
-	//TODO implement me
-	panic("implement me")
+func (s server) DeleteDevice(ctx context.Context, request *gen.DeleteDeviceRequest) (*gen.DeleteDeviceResponse, error) {
+	return s.deviceProcedure.DeleteDevice(ctx, request)
 }
 
-func (s server) GetConfig(ctx context.Context, request *gen.GetConfigRequest) (*gen.GetConfigResponse, error) {
+func (s server) ListReadings(request *gen.ListReadingsRequest, readingsServer gen.ThermometerService_ListReadingsServer) error {
 	//TODO implement me
 	panic("implement me")
 }
 
 func (s server) mustEmbedUnimplementedThermometerServiceServer() {
-	//TODO implement me
-	panic("implement me")
 }

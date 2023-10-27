@@ -21,8 +21,8 @@ type procedures struct {
 
 func NewProcedures(services service.Services) Procedures {
 	userProcedure := newUserProcedure(services.User())
-	deviceProcedure := newDeviceProcedure(services.Device())
-	readingProcedure := newReadingProcedure(services.Reading())
+	deviceProcedure := newDeviceProcedure(services.Device(), services.User())
+	readingProcedure := newReadingProcedure(services.Reading(), services.User())
 	grpcServer := grpc.NewServer()
 	s := &server{}
 	gen.RegisterThermometerServiceServer(grpcServer, s)

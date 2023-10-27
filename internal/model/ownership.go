@@ -1,12 +1,16 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"time"
+)
 
 type Ownership struct {
-	gorm.Model
-	UserID   uint
-	DeviceID uint
-	Role     OwnershipRole
+	ID        uint64 `gorm:"primarykey"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	UserID    uint
+	DeviceID  uint
+	Role      OwnershipRole
 }
 
 type OwnershipRole int
