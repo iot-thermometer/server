@@ -41,3 +41,7 @@ func Int64(n int64) *int64 {
 func Int(n int) *int {
 	return &n
 }
+
+func Float32(n float32) *float32 {
+	return &n
+}

@@ -2,6 +2,7 @@ package procedure
 
 import (
 	"context"
+
 	"github.com/iot-thermometer/server/gen"
 )
 
@@ -38,9 +39,5 @@ func (s server) DeleteDevice(ctx context.Context, request *gen.DeleteDeviceReque
 }
 
 func (s server) ListReadings(request *gen.ListReadingsRequest, readingsServer gen.ThermometerService_ListReadingsServer) error {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (s server) mustEmbedUnimplementedThermometerServiceServer() {
+	return s.readingProcedure.List(request, readingsServer)
 }

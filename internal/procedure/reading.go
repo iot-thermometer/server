@@ -1,13 +1,15 @@
 package procedure
 
 import (
-	"context"
+	"fmt"
+
 	"github.com/iot-thermometer/server/gen"
 	"github.com/iot-thermometer/server/internal/service"
+	"google.golang.org/grpc/metadata"
 )
 
 type Reading interface {
-	GetReadings(ctx context.Context, request *gen.ListReadingsRequest) (*gen.ListReadingsResponse, error)
+	List(crequest *gen.ListReadingsRequest, stream gen.ThermometerService_ListReadingsServer) error
 }
 
 type readingProcedure struct {
@@ -22,7 +24,37 @@ func newReadingProcedure(readingService service.Reading, userService service.Use
 	}
 }
 
-func (r readingProcedure) GetReadings(ctx context.Context, request *gen.ListReadingsRequest) (*gen.ListReadingsResponse, error) {
-	//TODO implement me
-	panic("implement me")
+func (r readingProcedure) List(request *gen.ListReadingsRequest, stream gen.ThermometerService_ListReadingsServer) error {
+	md, ok := metadata.FromIncomingContext(stream.Context())
+	if !ok {
+		return fmt.Errorf("missing context metadata")
+	}
+	token := md.Get("Authorization")[0]
+	userID, err := r.userService.DecodeToken(token)
+	if err != nil {
+		return err
+	}
+	readings, nil := r.readingService.List(userID, uint(request.Id))
+	if err != nil {
+		return err
+	}
+
+	var readingsProtobuf []*gen.Reading
+	for _, reading := range readings {
+		readingsProtobuf = append(readingsProtobuf, reading.Protobuf())
+	}
+	stream.Send(&gen.ListReadingsResponse{
+		Readings: readingsProtobuf,
+	})
+
+	for {
+		select {
+		case <-stream.Context().Done():
+			return nil
+		case reading := <-r.readingService.Channel():
+			stream.Send(&gen.ListReadingsResponse{
+				Readings: []*gen.Reading{reading.Protobuf()},
+			})
+		}
+	}
 }
