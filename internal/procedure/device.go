@@ -26,6 +26,7 @@ type deviceProcedure struct {
 func newDeviceProcedure(deviceService service.Device, userService service.User) Device {
 	return &deviceProcedure{
 		deviceService: deviceService,
+		userService:   userService,
 	}
 }
 

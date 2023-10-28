@@ -9,7 +9,7 @@ import (
 )
 
 type Reading interface {
-	List(crequest *gen.ListReadingsRequest, stream gen.ThermometerService_ListReadingsServer) error
+	List(request *gen.ListReadingsRequest, stream gen.ThermometerService_ListReadingsServer) error
 }
 
 type readingProcedure struct {
@@ -34,7 +34,7 @@ func (r readingProcedure) List(request *gen.ListReadingsRequest, stream gen.Ther
 	if err != nil {
 		return err
 	}
-	readings, nil := r.readingService.List(userID, uint(request.Id))
+	readings, err := r.readingService.List(userID, uint(request.Id))
 	if err != nil {
 		return err
 	}
@@ -43,9 +43,12 @@ func (r readingProcedure) List(request *gen.ListReadingsRequest, stream gen.Ther
 	for _, reading := range readings {
 		readingsProtobuf = append(readingsProtobuf, reading.Protobuf())
 	}
-	stream.Send(&gen.ListReadingsResponse{
+	err = stream.Send(&gen.ListReadingsResponse{
 		Readings: readingsProtobuf,
 	})
+	if err != nil {
+		return err
+	}
 
 	for {
 		select {
