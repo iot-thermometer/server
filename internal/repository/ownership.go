@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+
 	"github.com/iot-thermometer/server/internal/model"
 	"gorm.io/gorm"
 )

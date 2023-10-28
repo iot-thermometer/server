@@ -2,12 +2,12 @@ package model
 
 import (
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type Device struct {
-	ID              uint64 `gorm:"primarykey"`
-	CreatedAt       time.Time
-	UpdatedAt       time.Time
+	gorm.Model
 	Name            string `gorm:"not null"`
 	RecentlySeenAt  time.Time
 	Token           string `gorm:"not null"`

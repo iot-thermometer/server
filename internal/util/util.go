@@ -1,10 +1,11 @@
 package util
 
 import (
-	"github.com/labstack/echo/v4"
 	"math/rand"
 	"strconv"
 	"strings"
+
+	"github.com/labstack/echo/v4"
 )
 
 func GetTokenFromContext(c echo.Context) string {
@@ -27,4 +28,16 @@ func RandStringRunes(n int) string {
 		b[i] = letterRunes[rand.Intn(len(letterRunes))]
 	}
 	return string(b)
+}
+
+func Uint64(n uint64) *uint64 {
+	return &n
+}
+
+func Int64(n int64) *int64 {
+	return &n
+}
+
+func Int(n int) *int {
+	return &n
 }

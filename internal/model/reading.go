@@ -2,12 +2,12 @@ package model
 
 import (
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type Reading struct {
-	ID         uint64 `gorm:"primarykey"`
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
+	gorm.Model
 	DeviceID   uint
 	Value      float64 `gorm:"not null"`
 	Type       string  `gorm:"not null"`
