@@ -2,9 +2,12 @@ package procedure
 
 import (
 	"errors"
+
 	"github.com/iot-thermometer/server/gen"
 	"github.com/iot-thermometer/server/internal/dto"
 	"github.com/iot-thermometer/server/internal/service"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type User interface {
@@ -25,7 +28,7 @@ func (u userProcedure) Login(request *gen.LoginRequest) (*gen.LoginResponse, err
 	var appError dto.AppError
 	if err != nil {
 		if errors.As(err, &appError) {
-			return nil, err
+			return nil, status.Errorf(codes.InvalidArgument, err.Error())
 		}
 		return nil, err
 	}
@@ -37,7 +40,7 @@ func (u userProcedure) Register(request *gen.RegisterRequest) (*gen.RegisterResp
 	var appError dto.AppError
 	if err != nil {
 		if errors.As(err, &appError) {
-			return nil, err
+			return nil, status.Errorf(codes.InvalidArgument, err.Error())
 		}
 		return nil, err
 	}

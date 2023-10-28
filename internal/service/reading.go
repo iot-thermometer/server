@@ -3,17 +3,19 @@ package service
 import (
 	"encoding/json"
 	"fmt"
+	"time"
+
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/iot-thermometer/server/internal/dto"
 	"github.com/iot-thermometer/server/internal/model"
 	"github.com/iot-thermometer/server/internal/repository"
 	"github.com/sirupsen/logrus"
-	"time"
 )
 
 type Reading interface {
 	List(userID, deviceID uint) ([]model.Reading, error)
 	Handle(message mqtt.Message) error
+	Channel() chan model.Reading
 }
 
 type reading struct {
@@ -21,6 +23,8 @@ type reading struct {
 	deviceService     Device
 	deviceRepository  repository.Device
 	readingRepository repository.Reading
+
+	readings chan model.Reading
 }
 
 func newReadingService(userService User, deviceService Device, deviceRepository repository.Device, readingRepository repository.Reading) Reading {
@@ -29,6 +33,7 @@ func newReadingService(userService User, deviceService Device, deviceRepository 
 		deviceService:     deviceService,
 		deviceRepository:  deviceRepository,
 		readingRepository: readingRepository,
+		readings:          make(chan model.Reading),
 	}
 }
 
@@ -73,7 +78,13 @@ func (r reading) Handle(message mqtt.Message) error {
 		return err
 	}
 
+	r.readings <- reading
+
 	logrus.Info("Received reading: ", reading)
 
 	return nil
+}
+
+func (r *reading) Channel() chan model.Reading {
+	return r.readings
 }
