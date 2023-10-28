@@ -1,5 +1,6 @@
 FROM golang AS builder
 WORKDIR /app
+RUN apt-get update -y && apt install protobuf-compiler -y
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . ./
