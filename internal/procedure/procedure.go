@@ -24,7 +24,11 @@ func NewProcedures(services service.Services) Procedures {
 	deviceProcedure := newDeviceProcedure(services.Device(), services.User())
 	readingProcedure := newReadingProcedure(services.Reading(), services.User())
 	grpcServer := grpc.NewServer()
-	s := &server{}
+	s := &server{
+		userProcedure:    userProcedure,
+		deviceProcedure:  deviceProcedure,
+		readingProcedure: readingProcedure,
+	}
 	gen.RegisterThermometerServiceServer(grpcServer, s)
 	return &procedures{
 		userProcedure:    userProcedure,
