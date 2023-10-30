@@ -10,20 +10,20 @@ import (
 
 type Reading struct {
 	gorm.Model
-	DeviceID   uint
-	Value      float64 `gorm:"not null"`
-	Type       string  `gorm:"not null"`
-	MeasuredAt time.Time
-	UploadedAt time.Time
+	DeviceID     uint
+	SoilMoisture float64 `gorm:"not null"`
+	Temperature  float64 `gorm:"not null"`
+	MeasuredAt   time.Time
+	UploadedAt   time.Time
 }
 
 func (r Reading) Protobuf() *gen.Reading {
 	return &gen.Reading{
-		Id:         util.Int64(int64(r.ID)),
-		DeviceId:   util.Int64(int64(r.DeviceID)),
-		Value:      util.Float32(float32(r.Value)),
-		Type:       &r.Type,
-		MeasuredAt: util.Int64(r.MeasuredAt.Unix()),
-		UploadedAt: util.Int64(r.UploadedAt.Unix()),
+		Id:           util.Int64(int64(r.ID)),
+		DeviceId:     util.Int64(int64(r.DeviceID)),
+		SoilMoisture: util.Float32(float32(r.SoilMoisture)),
+		Temperature:  util.Float32(float32(r.Temperature)),
+		MeasuredAt:   util.Int64(r.MeasuredAt.Unix()),
+		UploadedAt:   util.Int64(r.UploadedAt.Unix()),
 	}
 }
