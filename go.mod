@@ -16,6 +16,7 @@ require (
 )
 
 require (
+	github.com/andreburgaud/crypt2go v1.4.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect

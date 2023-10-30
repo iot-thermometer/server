@@ -1,10 +1,15 @@
 package service
 
 import (
+	"crypto/aes"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"strconv"
+	"strings"
 	"time"
 
+	"github.com/andreburgaud/crypt2go/ecb"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/iot-thermometer/server/internal/dto"
 	"github.com/iot-thermometer/server/internal/model"
@@ -49,9 +54,33 @@ func (r reading) List(userID, deviceID uint) ([]model.Reading, error) {
 }
 
 func (r reading) Handle(message mqtt.Message) error {
-	var msg dto.TopicMessage
+	payloadString := message.Payload()
+	parts := strings.Split(string(payloadString), ";")
 
-	err := json.Unmarshal(message.Payload(), &msg)
+	deviceID, err := strconv.Atoi(parts[0])
+	if err != nil {
+		return err
+	}
+	device, err := r.deviceRepository.GetByID(uint(deviceID))
+	if err != nil {
+		return err
+	}
+
+	cipher, err := aes.NewCipher([]byte(device.Token))
+	if err != nil {
+		return err
+	}
+
+	encrypted, err := hex.DecodeString(parts[1])
+	if err != nil {
+		return err
+	}
+	decrypted := make([]byte, 512)
+	e := ecb.NewECBDecrypter(cipher)
+	e.CryptBlocks(decrypted, encrypted)
+
+	var msg dto.TopicMessage
+	err = json.Unmarshal(decrypted, &msg)
 	if err != nil {
 		return err
 	}
@@ -68,10 +97,6 @@ func (r reading) Handle(message mqtt.Message) error {
 		return err
 	}
 
-	device, err := r.deviceRepository.GetByID(msg.DeviceID)
-	if err != nil {
-		return err
-	}
 	device.RecentlySeenAt = time.Now()
 	_, err = r.deviceRepository.Save(device)
 	if err != nil {
