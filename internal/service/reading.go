@@ -65,6 +65,11 @@ func (r reading) Handle(message mqtt.Message) error {
 	if err != nil {
 		return err
 	}
+	device.RecentlySeenAt = time.Now()
+	_, err = r.deviceRepository.Save(device)
+	if err != nil {
+		return err
+	}
 
 	cipher, err := aes.NewCipher([]byte(device.Token))
 	if err != nil {
@@ -81,9 +86,6 @@ func (r reading) Handle(message mqtt.Message) error {
 
 	index := strings.Index(string(decrypted), "}")
 	j := string(decrypted)[:index+1]
-
-	fmt.Println("DECRYPTING")
-	fmt.Println(j)
 
 	var msg dto.TopicMessage
 	err = json.Unmarshal([]byte(j), &msg)
@@ -102,14 +104,6 @@ func (r reading) Handle(message mqtt.Message) error {
 	if err != nil {
 		return err
 	}
-
-	device.RecentlySeenAt = time.Now()
-	_, err = r.deviceRepository.Save(device)
-	if err != nil {
-		return err
-	}
-
-	r.readings <- reading
 
 	logrus.Info("Received reading: ", reading)
 
