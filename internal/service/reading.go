@@ -76,6 +76,8 @@ func (r reading) Handle(message mqtt.Message) error {
 		return err
 	}
 	decrypted := make([]byte, 512)
+	fmt.Println("DECRYPTING")
+	fmt.Println(string(decrypted))
 	e := ecb.NewECBDecrypter(cipher)
 	e.CryptBlocks(decrypted, encrypted)
 
