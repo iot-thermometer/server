@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+
 	"github.com/iot-thermometer/server/internal/dto"
 	"github.com/iot-thermometer/server/internal/model"
 	"github.com/iot-thermometer/server/internal/repository"
@@ -42,7 +43,7 @@ func (d device) List(userID uint) ([]model.Device, error) {
 func (d device) Create(userID uint, payload dto.CreateDeviceRequest) (model.Device, error) {
 	device := model.Device{
 		Name:            payload.Name,
-		Token:           util.RandStringRunes(32),
+		Token:           util.RandStringRunes(16),
 		ReadingInterval: payload.ReadingInterval,
 		PushInterval:    payload.PushInterval,
 	}
