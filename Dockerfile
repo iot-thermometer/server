@@ -14,5 +14,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /main github.com/iot-thermometer/server
 FROM alpine
 WORKDIR /
 COPY --from=builder /main /main
+COPY cmd/server.crt /server.crt
+COPY cmd/server.key /server.key
 EXPOSE 4444
 ENTRYPOINT ["/main"]

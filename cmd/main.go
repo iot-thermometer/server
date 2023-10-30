@@ -2,6 +2,9 @@ package main
 
 import (
 	"errors"
+	"net"
+	"os"
+
 	"github.com/iot-thermometer/server/internal/client"
 	"github.com/iot-thermometer/server/internal/controller"
 	"github.com/iot-thermometer/server/internal/dto"
@@ -14,8 +17,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"net"
-	"os"
 )
 
 func main() {
@@ -68,7 +69,7 @@ func main() {
 		if grpcPort == "" {
 			grpcPort = "3001"
 		}
-		logrus.Info("Starting GRPC server on port " + grpcPort)
+		logrus.Info("Starting GRPC (TLS) server on port " + grpcPort)
 		listener, err := net.Listen("tcp", ":"+grpcPort)
 		if err != nil {
 			logrus.Panic(err)

@@ -1,10 +1,13 @@
 package procedure
 
 import (
+	"net"
+
 	"github.com/iot-thermometer/server/gen"
 	"github.com/iot-thermometer/server/internal/service"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
-	"net"
+	"google.golang.org/grpc/credentials"
 )
 
 type Procedures interface {
@@ -23,7 +26,11 @@ func NewProcedures(services service.Services) Procedures {
 	userProcedure := newUserProcedure(services.User())
 	deviceProcedure := newDeviceProcedure(services.Device(), services.User())
 	readingProcedure := newReadingProcedure(services.Reading(), services.User())
-	grpcServer := grpc.NewServer()
+	credentials, err := credentials.NewServerTLSFromFile("server.crt", "server.key")
+	if err != nil {
+		logrus.Panic(err)
+	}
+	grpcServer := grpc.NewServer(grpc.Creds(credentials))
 	s := &server{
 		userProcedure:    userProcedure,
 		deviceProcedure:  deviceProcedure,
