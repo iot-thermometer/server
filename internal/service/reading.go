@@ -79,11 +79,13 @@ func (r reading) Handle(message mqtt.Message) error {
 	e := ecb.NewECBDecrypter(cipher)
 	e.CryptBlocks(decrypted, encrypted)
 
+	j := string([]rune(string(decrypted))[:len(string(decrypted))-1])
+
 	fmt.Println("DECRYPTING")
-	fmt.Println(string(decrypted))
+	fmt.Println(j)
 
 	var msg dto.TopicMessage
-	err = json.Unmarshal(decrypted, &msg)
+	err = json.Unmarshal([]byte(j), &msg)
 	if err != nil {
 		return err
 	}
