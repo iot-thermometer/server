@@ -97,6 +97,7 @@ func (r reading) Handle(message mqtt.Message) error {
 		DeviceID:     msg.DeviceID,
 		SoilMoisture: msg.SoilMoisture,
 		Temperature:  msg.Temperature,
+		Other:        msg.Other,
 		MeasuredAt:   time.Unix(msg.Time, 0),
 		UploadedAt:   time.Now(),
 	}
