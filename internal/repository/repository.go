@@ -37,6 +37,10 @@ func NewRepositories(db *gorm.DB) Repositories {
 	if err != nil {
 		logrus.Panic(err)
 	}
+	err = db.AutoMigrate(&model.Alert{})
+	if err != nil {
+		logrus.Panic(err)
+	}
 
 	userRepository := newUserRepository(db)
 	ownershipRepository := newOwnershipRepository(db)
