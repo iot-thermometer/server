@@ -1,6 +1,7 @@
 package procedure
 
 import (
+	"crypto/tls"
 	"net"
 
 	"github.com/iot-thermometer/server/gen"
@@ -26,11 +27,11 @@ func NewProcedures(services service.Services) Procedures {
 	userProcedure := newUserProcedure(services.User())
 	deviceProcedure := newDeviceProcedure(services.Device(), services.User())
 	readingProcedure := newReadingProcedure(services.Reading(), services.User())
-	credentials, err := credentials.NewServerTLSFromFile("server.crt", "server.key")
+	creds, err := tls.LoadX509KeyPair("server.crt", "server.key")
 	if err != nil {
 		logrus.Panic(err)
 	}
-	grpcServer := grpc.NewServer(grpc.Creds(credentials))
+	grpcServer := grpc.NewServer(grpc.Creds(credentials.NewServerTLSFromCert(&creds)))
 	s := &server{
 		userProcedure:    userProcedure,
 		deviceProcedure:  deviceProcedure,
