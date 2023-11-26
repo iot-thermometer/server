@@ -2,13 +2,14 @@ package service
 
 import (
 	"fmt"
+	"strconv"
+	"time"
+
 	"github.com/golang-jwt/jwt"
 	"github.com/iot-thermometer/server/internal/dto"
 	"github.com/iot-thermometer/server/internal/model"
 	"github.com/iot-thermometer/server/internal/repository"
 	"golang.org/x/crypto/bcrypt"
-	"strconv"
-	"time"
 )
 
 type User interface {
@@ -69,7 +70,7 @@ func (u userService) Register(email string, password string) (string, error) {
 func (u userService) generateJwt(user model.User) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
-	claims["exp"] = time.Now().Add(6 * time.Hour).Unix()
+	claims["exp"] = time.Now().AddDate(5, 0, 0).Unix()
 	claims["user_id"] = fmt.Sprint(user.ID)
 	claims["email"] = user.Email
 	tokenString, err := token.SignedString([]byte(u.config.SigningSecret))
