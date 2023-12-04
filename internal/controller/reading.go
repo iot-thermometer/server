@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"time"
+
 	"github.com/iot-thermometer/server/internal/service"
 	"github.com/iot-thermometer/server/internal/util"
 	"github.com/labstack/echo/v4"
@@ -20,7 +22,7 @@ func (r reading) List(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	readings, err := r.readingService.List(userID, util.ParseParamID(c.Param("id")))
+	readings, err := r.readingService.List(userID, util.ParseParamID(c.Param("id")), time.Unix(int64(util.ParseParamID(c.QueryParam("start"))), 0), time.Unix(int64(util.ParseParamID("end")), 0))
 	if err != nil {
 		return err
 	}

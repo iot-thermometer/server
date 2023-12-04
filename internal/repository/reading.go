@@ -1,12 +1,14 @@
 package repository
 
 import (
+	"time"
+
 	"github.com/iot-thermometer/server/internal/model"
 	"gorm.io/gorm"
 )
 
 type Reading interface {
-	List(deviceID uint) ([]model.Reading, error)
+	List(deviceID uint, start, end time.Time) ([]model.Reading, error)
 	Create(reading model.Reading) (model.Reading, error)
 }
 
@@ -20,9 +22,9 @@ func newReadingRepository(db *gorm.DB) Reading {
 	}
 }
 
-func (r reading) List(deviceID uint) ([]model.Reading, error) {
+func (r reading) List(deviceID uint, start, end time.Time) ([]model.Reading, error) {
 	readings := make([]model.Reading, 0)
-	if err := r.db.Where("device_id = ?", deviceID).Find(&readings).Error; err != nil {
+	if err := r.db.Where("device_id = ? and created_at > ? and created_at < ?", deviceID, start, end).Find(&readings).Error; err != nil {
 		return nil, err
 	}
 	return readings, nil

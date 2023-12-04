@@ -1,7 +1,9 @@
 package procedure
 
 import (
+	"context"
 	"fmt"
+	"time"
 
 	"github.com/iot-thermometer/server/gen"
 	"github.com/iot-thermometer/server/internal/service"
@@ -9,7 +11,7 @@ import (
 )
 
 type Reading interface {
-	List(request *gen.ListReadingsRequest, stream gen.ThermometerService_ListReadingsServer) error
+	List(ctx context.Context, request *gen.ListReadingsRequest) (*gen.ListReadingsResponse, error)
 }
 
 type readingProcedure struct {
@@ -24,40 +26,25 @@ func newReadingProcedure(readingService service.Reading, userService service.Use
 	}
 }
 
-func (r readingProcedure) List(request *gen.ListReadingsRequest, stream gen.ThermometerService_ListReadingsServer) error {
-	md, ok := metadata.FromIncomingContext(stream.Context())
+func (r readingProcedure) List(ctx context.Context, request *gen.ListReadingsRequest) (*gen.ListReadingsResponse, error) {
+	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		return fmt.Errorf("missing context metadata")
+		return nil, fmt.Errorf("missing context metadata")
 	}
 	token := md.Get("Authorization")[0]
 	userID, err := r.userService.DecodeToken(token)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	readings, err := r.readingService.List(userID, uint(request.Id))
+	readings, err := r.readingService.List(userID, uint(request.Id), time.Unix(request.Start, 0), time.Unix(request.End, 0))
 	if err != nil {
-		return err
+		return nil, err
 	}
-
 	var readingsProtobuf []*gen.Reading
 	for _, reading := range readings {
 		readingsProtobuf = append(readingsProtobuf, reading.Protobuf())
 	}
-	err = stream.Send(&gen.ListReadingsResponse{
+	return &gen.ListReadingsResponse{
 		Readings: readingsProtobuf,
-	})
-	if err != nil {
-		return err
-	}
-
-	for {
-		select {
-		case <-stream.Context().Done():
-			return nil
-		case reading := <-r.readingService.Channel():
-			stream.Send(&gen.ListReadingsResponse{
-				Readings: []*gen.Reading{reading.Protobuf()},
-			})
-		}
-	}
+	}, nil
 }

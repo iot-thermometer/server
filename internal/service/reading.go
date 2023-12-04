@@ -18,7 +18,7 @@ import (
 )
 
 type Reading interface {
-	List(userID, deviceID uint) ([]model.Reading, error)
+	List(userID, deviceID uint, start, end time.Time) ([]model.Reading, error)
 	Handle(message mqtt.Message) error
 	Channel() chan model.Reading
 }
@@ -42,7 +42,7 @@ func newReadingService(userService User, deviceService Device, deviceRepository 
 	}
 }
 
-func (r reading) List(userID, deviceID uint) ([]model.Reading, error) {
+func (r reading) List(userID, deviceID uint, start, end time.Time) ([]model.Reading, error) {
 	owns, err := r.deviceService.Owns(userID, deviceID)
 	if err != nil {
 		return nil, err
@@ -50,7 +50,7 @@ func (r reading) List(userID, deviceID uint) ([]model.Reading, error) {
 	if !owns {
 		return nil, fmt.Errorf("user %d does not own device %d", userID, deviceID)
 	}
-	return r.readingRepository.List(deviceID)
+	return r.readingRepository.List(deviceID, start, end)
 }
 
 func (r reading) Handle(message mqtt.Message) error {

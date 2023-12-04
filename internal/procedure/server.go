@@ -38,6 +38,6 @@ func (s server) DeleteDevice(ctx context.Context, request *gen.DeleteDeviceReque
 	return s.deviceProcedure.DeleteDevice(ctx, request)
 }
 
-func (s server) ListReadings(request *gen.ListReadingsRequest, readingsServer gen.ThermometerService_ListReadingsServer) error {
-	return s.readingProcedure.List(request, readingsServer)
+func (s server) ListReadings(ctx context.Context, request *gen.ListReadingsRequest) (*gen.ListReadingsResponse, error) {
+	return s.readingProcedure.List(ctx, request)
 }
