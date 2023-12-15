@@ -2,7 +2,6 @@ package procedure
 
 import (
 	"context"
-
 	"github.com/iot-thermometer/server/gen"
 )
 
@@ -12,6 +11,7 @@ type server struct {
 	userProcedure    User
 	deviceProcedure  Device
 	readingProcedure Reading
+	alertProcedure   Alert
 }
 
 func (s server) Login(ctx context.Context, request *gen.LoginRequest) (*gen.LoginResponse, error) {
@@ -40,4 +40,20 @@ func (s server) DeleteDevice(ctx context.Context, request *gen.DeleteDeviceReque
 
 func (s server) ListReadings(ctx context.Context, request *gen.ListReadingsRequest) (*gen.ListReadingsResponse, error) {
 	return s.readingProcedure.List(ctx, request)
+}
+
+func (s server) ListAlerts(ctx context.Context, request *gen.ListAlertsRequest) (*gen.ListAlertsResponse, error) {
+	return s.alertProcedure.List(ctx, request)
+}
+
+func (s server) CreateAlert(ctx context.Context, request *gen.CreateAlertRequest) (*gen.CreateAlertResponse, error) {
+	return s.alertProcedure.Create(ctx, request)
+}
+
+func (s server) UpdateAlert(ctx context.Context, request *gen.UpdateAlertRequest) (*gen.UpdateAlertResponse, error) {
+	return s.alertProcedure.Update(ctx, request)
+}
+
+func (s server) DeleteAlert(ctx context.Context, request *gen.DeleteAlertRequest) (*gen.DeleteAlertResponse, error) {
+	return s.alertProcedure.Delete(ctx, request)
 }
