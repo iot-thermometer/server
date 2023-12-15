@@ -7,6 +7,7 @@ import (
 
 type Alert interface {
 	GetByUserID(userID uint) ([]model.Alert, error)
+	GetByUserIDAndID(userID, id uint) (model.Alert, error)
 	Create(alert model.Alert) (model.Alert, error)
 	Save(alert model.Alert) (model.Alert, error)
 	DeleteByID(id uint) error
@@ -22,6 +23,14 @@ func (a alert) GetByUserID(userID uint) ([]model.Alert, error) {
 		return nil, err
 	}
 	return alerts, nil
+}
+
+func (a alert) GetByUserIDAndID(userID, id uint) (model.Alert, error) {
+	var alert model.Alert
+	if err := a.db.Where("user_id = ? and id = ?", userID, id).Find(&alert).Error; err != nil {
+		return model.Alert{}, err
+	}
+	return alert, nil
 }
 
 func (a alert) Create(alert model.Alert) (model.Alert, error) {
