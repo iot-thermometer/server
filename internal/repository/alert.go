@@ -6,6 +6,7 @@ import (
 )
 
 type Alert interface {
+	GetAll() ([]model.Alert, error)
 	GetByUserID(userID uint) ([]model.Alert, error)
 	GetByUserIDAndID(userID, id uint) (model.Alert, error)
 	Create(alert model.Alert) (model.Alert, error)
@@ -15,6 +16,14 @@ type Alert interface {
 
 type alert struct {
 	db *gorm.DB
+}
+
+func (a alert) GetAll() ([]model.Alert, error) {
+	alerts := make([]model.Alert, 0)
+	if err := a.db.Find(&alerts).Error; err != nil {
+		return nil, err
+	}
+	return alerts, nil
 }
 
 func (a alert) GetByUserID(userID uint) ([]model.Alert, error) {

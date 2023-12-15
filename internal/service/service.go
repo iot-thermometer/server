@@ -22,8 +22,8 @@ type services struct {
 func NewServices(repositories repository.Repositories, config dto.Config) Services {
 	userService := newUserService(repositories.User(), config)
 	deviceService := newDeviceService(repositories.Ownership(), repositories.Device())
-	readingService := newReadingService(userService, deviceService, repositories.Device(), repositories.Reading())
 	alertService := newAlertService(repositories.Alert())
+	readingService := newReadingService(userService, deviceService, alertService, repositories.Device(), repositories.Reading())
 	return &services{
 		userService:    userService,
 		deviceService:  deviceService,

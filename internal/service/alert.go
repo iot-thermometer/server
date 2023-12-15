@@ -12,6 +12,8 @@ type Alert interface {
 	Update(userID, alertID uint, payload dto.UpdateAlertRequest) (model.Alert, error)
 	Delete(userID, alertID uint) error
 	Owns(userID uint, alertID uint) (bool, error)
+
+	Check(reading model.Reading) error
 }
 
 type alert struct {
@@ -73,4 +75,21 @@ func (a alert) Owns(userID uint, alertID uint) (bool, error) {
 		return false, err
 	}
 	return true, nil
+}
+
+func (a alert) Check(reading model.Reading) error {
+	alerts, err := a.alertRepository.GetAll()
+	if err != nil {
+		return err
+	}
+
+	for _, alert := range alerts {
+		if alert.DeviceID == reading.DeviceID {
+			if reading.SoilMoisture > alert.SoilMoistureMin && reading.SoilMoisture < alert.SoilMoistureMax &&
+				reading.Temperature > alert.TemperatureMin && reading.Temperature < alert.TemperatureMax {
+				// TODO send notification
+			}
+		}
+	}
+	return nil
 }
