@@ -27,11 +27,11 @@ func NewProcedures(services service.Services) Procedures {
 	userProcedure := newUserProcedure(services.User())
 	deviceProcedure := newDeviceProcedure(services.Device(), services.User())
 	readingProcedure := newReadingProcedure(services.Reading(), services.User())
-	creds, err := tls.LoadX509KeyPair("server.crt", "server.key")
+	grpcCredentials, err := tls.LoadX509KeyPair("server.crt", "server.key")
 	if err != nil {
 		logrus.Panic(err)
 	}
-	grpcServer := grpc.NewServer(grpc.Creds(credentials.NewServerTLSFromCert(&creds)))
+	grpcServer := grpc.NewServer(grpc.Creds(credentials.NewServerTLSFromCert(&grpcCredentials)))
 	s := &server{
 		userProcedure:    userProcedure,
 		deviceProcedure:  deviceProcedure,
