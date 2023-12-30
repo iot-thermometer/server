@@ -6,9 +6,12 @@ services:
       DSN: host=db user=postgres password=jqKwlS9vN0mfm1v dbname=iot sslmode=disable
       SIGNING_SECRET: SecretYouShouldHide
       BROKER: tcp://broker:1883
+      GOOGLE_APPLICATION_CREDENTIALS: /credentials/credentials.json
     depends_on:
       db:
         condition: service_healthy
+    volumes:
+      - ./credentials.json:/credentials/credentials.json
     ports:
       - "3009:3000"
       - "3010:3001"

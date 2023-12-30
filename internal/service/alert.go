@@ -1,9 +1,14 @@
 package service
 
 import (
+	"context"
+	firebase "firebase.google.com/go"
+	"firebase.google.com/go/messaging"
 	"github.com/iot-thermometer/server/internal/dto"
 	"github.com/iot-thermometer/server/internal/model"
 	"github.com/iot-thermometer/server/internal/repository"
+	"google.golang.org/api/option"
+	"os"
 )
 
 type Alert interface {
@@ -18,11 +23,24 @@ type Alert interface {
 
 type alert struct {
 	alertRepository repository.Alert
+	phoneRepository repository.Phone
+	messaging       *messaging.Client
 }
 
-func newAlertService(alertRepository repository.Alert) Alert {
+func newAlertService(alertRepository repository.Alert, phoneRepository repository.Phone) Alert {
+	opt := option.WithCredentialsFile(os.Getenv("GOOGLE_APPLICATION_CREDENTIALS"))
+	app, err := firebase.NewApp(context.Background(), nil, opt)
+	if err != nil {
+		panic(err)
+	}
+	m, err := app.Messaging(context.Background())
+	if err != nil {
+		panic(err)
+	}
 	return alert{
 		alertRepository: alertRepository,
+		phoneRepository: phoneRepository,
+		messaging:       m,
 	}
 }
 
@@ -85,7 +103,15 @@ func (a alert) Check(reading model.Reading) error {
 		if alert.DeviceID == reading.DeviceID {
 			if reading.SoilMoisture > alert.SoilMoistureMin && reading.SoilMoisture < alert.SoilMoistureMax &&
 				reading.Temperature > alert.TemperatureMin && reading.Temperature < alert.TemperatureMax {
-				// TODO send notification
+
+				phones, err := a.phoneRepository.List(alert.UserID)
+				if err != nil {
+					return err
+				}
+				for _, phone := range phones {
+					// TODO send notification
+					_ = phone
+				}
 			}
 		}
 	}

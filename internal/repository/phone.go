@@ -6,6 +6,7 @@ import (
 )
 
 type Phone interface {
+	List(userID uint) ([]model.Phone, error)
 	GetByUserIDAndPushID(userID uint, pushID string) (model.Phone, error)
 	Update(phone model.Phone) (model.Phone, error)
 	Create(phone model.Phone) (model.Phone, error)
@@ -20,11 +21,20 @@ func newPhoneRepository(db *gorm.DB) Phone {
 	return phone{db}
 }
 
+func (p phone) List(userID uint) ([]model.Phone, error) {
+	var phones []model.Phone
+	tx := p.db.Where("user_id = ?", userID).Find(&phones)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+	return phones, nil
+}
+
 func (p phone) GetByUserIDAndPushID(userID uint, pushID string) (model.Phone, error) {
 	var exists bool
 	err := p.db.Model(model.Phone{}).
 		Select("count(*) > 0").
-		Where("user_id = ? and push_id = ?", userID, pushID).
+		Where("user_id = ? and firebase_push_id = ?", userID, pushID).
 		Find(&exists).
 		Error
 	if err != nil {
@@ -35,7 +45,7 @@ func (p phone) GetByUserIDAndPushID(userID uint, pushID string) (model.Phone, er
 	}
 
 	var phone model.Phone
-	tx := p.db.Where("user_id = ? and push_id = ?", userID, pushID).First(&phone)
+	tx := p.db.Where("user_id = ? and firebase_push_id = ?", userID, pushID).First(&phone)
 	if tx.Error != nil {
 		return model.Phone{}, tx.Error
 	}
