@@ -20,6 +20,7 @@ type procedures struct {
 	deviceProcedure  Device
 	readingProcedure Reading
 	alertProcedure   Alert
+	phoneProcedure   Phone
 
 	grpcServer *grpc.Server
 }
@@ -29,6 +30,7 @@ func NewProcedures(services service.Services) Procedures {
 	deviceProcedure := newDeviceProcedure(services.Device(), services.User())
 	readingProcedure := newReadingProcedure(services.Reading(), services.User())
 	alertProcedure := newAlertProcedure(services.Alert(), services.User())
+	phoneProcedure := newPhoneProcedure(services.Phone(), services.User())
 	grpcCredentials, err := tls.LoadX509KeyPair("server.crt", "server.key")
 	if err != nil {
 		logrus.Panic(err)
@@ -39,6 +41,7 @@ func NewProcedures(services service.Services) Procedures {
 		deviceProcedure:  deviceProcedure,
 		readingProcedure: readingProcedure,
 		alertProcedure:   alertProcedure,
+		phoneProcedure:   phoneProcedure,
 	}
 	gen.RegisterThermometerServiceServer(grpcServer, s)
 	return &procedures{
@@ -46,6 +49,7 @@ func NewProcedures(services service.Services) Procedures {
 		deviceProcedure:  deviceProcedure,
 		readingProcedure: readingProcedure,
 		alertProcedure:   alertProcedure,
+		phoneProcedure:   phoneProcedure,
 		grpcServer:       grpcServer,
 	}
 }

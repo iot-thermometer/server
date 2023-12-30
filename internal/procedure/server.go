@@ -12,6 +12,7 @@ type server struct {
 	deviceProcedure  Device
 	readingProcedure Reading
 	alertProcedure   Alert
+	phoneProcedure   Phone
 }
 
 func (s server) Login(ctx context.Context, request *gen.LoginRequest) (*gen.LoginResponse, error) {
@@ -56,4 +57,12 @@ func (s server) UpdateAlert(ctx context.Context, request *gen.UpdateAlertRequest
 
 func (s server) DeleteAlert(ctx context.Context, request *gen.DeleteAlertRequest) (*gen.DeleteAlertResponse, error) {
 	return s.alertProcedure.Delete(ctx, request)
+}
+
+func (s server) AddPhone(ctx context.Context, request *gen.AddPhoneRequest) (*gen.AddPhoneResponse, error) {
+	return s.phoneProcedure.Add(ctx, request)
+}
+
+func (s server) RemovePhone(ctx context.Context, request *gen.RemovePhoneRequest) (*gen.RemovePhoneResponse, error) {
+	return s.phoneProcedure.Remove(ctx, request)
 }
