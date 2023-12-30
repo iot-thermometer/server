@@ -10,6 +10,7 @@ type Services interface {
 	Device() Device
 	Reading() Reading
 	Alert() Alert
+	Phone() Phone
 }
 
 type services struct {
@@ -17,6 +18,7 @@ type services struct {
 	deviceService  Device
 	readingService Reading
 	alertService   Alert
+	phoneService   Phone
 }
 
 func NewServices(repositories repository.Repositories, config dto.Config) Services {
@@ -24,11 +26,13 @@ func NewServices(repositories repository.Repositories, config dto.Config) Servic
 	deviceService := newDeviceService(repositories.Ownership(), repositories.Device())
 	alertService := newAlertService(repositories.Alert())
 	readingService := newReadingService(userService, deviceService, alertService, repositories.Device(), repositories.Reading())
+	phoneService := newPhoneService(repositories.Phone())
 	return &services{
 		userService:    userService,
 		deviceService:  deviceService,
 		readingService: readingService,
 		alertService:   alertService,
+		phoneService:   phoneService,
 	}
 }
 
@@ -46,4 +50,8 @@ func (s services) Reading() Reading {
 
 func (s services) Alert() Alert {
 	return s.alertService
+}
+
+func (s services) Phone() Phone {
+	return s.phoneService
 }

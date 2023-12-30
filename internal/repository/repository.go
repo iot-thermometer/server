@@ -12,6 +12,7 @@ type Repositories interface {
 	Device() Device
 	Reading() Reading
 	Alert() Alert
+	Phone() Phone
 }
 
 type repositories struct {
@@ -20,6 +21,7 @@ type repositories struct {
 	deviceRepository    Device
 	readingRepository   Reading
 	alertRepository     Alert
+	phoneRepository     Phone
 }
 
 func NewRepositories(db *gorm.DB) Repositories {
@@ -43,18 +45,24 @@ func NewRepositories(db *gorm.DB) Repositories {
 	if err != nil {
 		logrus.Panic(err)
 	}
+	err = db.AutoMigrate(&model.Phone{})
+	if err != nil {
+		logrus.Panic(err)
+	}
 
 	userRepository := newUserRepository(db)
 	ownershipRepository := newOwnershipRepository(db)
 	deviceRepository := newDeviceRepository(db)
 	readingRepository := newReadingRepository(db)
 	alertRepository := newAlertRepository(db)
+	phoneRepository := newPhoneRepository(db)
 	return &repositories{
 		userRepository:      userRepository,
 		ownershipRepository: ownershipRepository,
 		deviceRepository:    deviceRepository,
 		readingRepository:   readingRepository,
 		alertRepository:     alertRepository,
+		phoneRepository:     phoneRepository,
 	}
 }
 
@@ -76,4 +84,8 @@ func (r repositories) Reading() Reading {
 
 func (r repositories) Alert() Alert {
 	return r.alertRepository
+}
+
+func (r repositories) Phone() Phone {
+	return r.phoneRepository
 }
