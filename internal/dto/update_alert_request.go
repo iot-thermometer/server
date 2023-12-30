@@ -6,5 +6,4 @@ type UpdateAlertRequest struct {
 	SoilMoistureMax float64 `json:"soil_moisture_max"`
 	TemperatureMin  float64 `json:"temperature_min"`
 	TemperatureMax  float64 `json:"temperature_max"`
-	PushToken       string  `json:"push_token"`
 }

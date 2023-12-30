@@ -11,5 +11,4 @@ type Alert struct {
 	SoilMoistureMax float64 `gorm:"not null" json:"soil_moisture_max"`
 	TemperatureMin  float64 `gorm:"not null" json:"temperature_min"`
 	TemperatureMax  float64 `gorm:"not null" json:"temperature_max"`
-	PushToken       string  `gorm:"type:varchar(100)" json:"push_token"`
 }

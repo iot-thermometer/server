@@ -49,7 +49,6 @@ func (a alert) List(ctx context.Context, request *gen.ListAlertsRequest) (*gen.L
 			SoilMoistureMax: util.Float32(float32(alert.SoilMoistureMax)),
 			TemperatureMin:  util.Float32(float32(alert.TemperatureMin)),
 			TemperatureMax:  util.Float32(float32(alert.TemperatureMax)),
-			PushToken:       &alert.PushToken,
 		})
 	}
 	return &gen.ListAlertsResponse{Alerts: pbAlerts}, nil
@@ -73,7 +72,6 @@ func (a alert) Create(ctx context.Context, request *gen.CreateAlertRequest) (*ge
 		SoilMoistureMax: float64(request.SoilMoistureMax),
 		TemperatureMin:  float64(request.TemperatureMin),
 		TemperatureMax:  float64(request.TemperatureMax),
-		PushToken:       request.PushToken,
 	})
 	if err != nil {
 		return nil, err
@@ -87,7 +85,6 @@ func (a alert) Create(ctx context.Context, request *gen.CreateAlertRequest) (*ge
 		SoilMoistureMax: util.Float32(float32(alert.SoilMoistureMax)),
 		TemperatureMin:  util.Float32(float32(alert.TemperatureMin)),
 		TemperatureMax:  util.Float32(float32(alert.TemperatureMax)),
-		PushToken:       &alert.PushToken,
 	}}, nil
 }
 
@@ -108,7 +105,6 @@ func (a alert) Update(ctx context.Context, request *gen.UpdateAlertRequest) (*ge
 		SoilMoistureMax: float64(request.SoilMoistureMax),
 		TemperatureMin:  float64(request.TemperatureMin),
 		TemperatureMax:  float64(request.TemperatureMax),
-		PushToken:       request.PushToken,
 	})
 	if err != nil {
 		return nil, err
@@ -122,7 +118,6 @@ func (a alert) Update(ctx context.Context, request *gen.UpdateAlertRequest) (*ge
 		SoilMoistureMax: util.Float32(float32(alert.SoilMoistureMax)),
 		TemperatureMin:  util.Float32(float32(alert.TemperatureMin)),
 		TemperatureMax:  util.Float32(float32(alert.TemperatureMax)),
-		PushToken:       &alert.PushToken,
 	}}, nil
 }
 

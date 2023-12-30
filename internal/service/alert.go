@@ -39,7 +39,6 @@ func (a alert) Create(userID uint, payload dto.CreateAlertRequest) (model.Alert,
 		SoilMoistureMax: payload.SoilMoistureMax,
 		TemperatureMin:  payload.TemperatureMin,
 		TemperatureMax:  payload.TemperatureMax,
-		PushToken:       payload.PushToken,
 	})
 }
 
@@ -53,7 +52,6 @@ func (a alert) Update(userID, alertID uint, payload dto.UpdateAlertRequest) (mod
 	alert.SoilMoistureMax = payload.SoilMoistureMax
 	alert.TemperatureMin = payload.TemperatureMin
 	alert.TemperatureMax = payload.TemperatureMax
-	alert.PushToken = payload.PushToken
 	alert, err = a.alertRepository.Save(alert)
 	if err != nil {
 		return model.Alert{}, err
