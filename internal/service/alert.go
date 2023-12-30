@@ -7,6 +7,7 @@ import (
 	"github.com/iot-thermometer/server/internal/dto"
 	"github.com/iot-thermometer/server/internal/model"
 	"github.com/iot-thermometer/server/internal/repository"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/api/option"
 	"os"
 )
@@ -109,8 +110,17 @@ func (a alert) Check(reading model.Reading) error {
 					return err
 				}
 				for _, phone := range phones {
-					// TODO send notification
-					_ = phone
+					logrus.Infof("Sending notification to %s", phone.FirebasePushToken)
+					_, err = a.messaging.Send(context.Background(), &messaging.Message{
+						Notification: &messaging.Notification{
+							Title: "Alert",
+							Body:  "Your plant needs water",
+						},
+						Token: phone.FirebasePushToken,
+					})
+					if err != nil {
+						return err
+					}
 				}
 			}
 		}
