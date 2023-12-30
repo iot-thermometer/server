@@ -20,22 +20,23 @@ import (
 type Reading interface {
 	List(userID, deviceID uint, start, end time.Time) ([]model.Reading, error)
 	Handle(message mqtt.Message) error
-	Channel() chan model.Reading
 }
 
 type reading struct {
 	userService       User
 	deviceService     Device
+	alertService      Alert
 	deviceRepository  repository.Device
 	readingRepository repository.Reading
 
 	readings chan model.Reading
 }
 
-func newReadingService(userService User, deviceService Device, deviceRepository repository.Device, readingRepository repository.Reading) Reading {
+func newReadingService(userService User, deviceService Device, alertService Alert, deviceRepository repository.Device, readingRepository repository.Reading) Reading {
 	return &reading{
 		userService:       userService,
 		deviceService:     deviceService,
+		alertService:      alertService,
 		deviceRepository:  deviceRepository,
 		readingRepository: readingRepository,
 		readings:          make(chan model.Reading),
@@ -107,10 +108,7 @@ func (r reading) Handle(message mqtt.Message) error {
 	}
 
 	logrus.Info("Received reading: ", reading)
+	go r.alertService.Check(reading)
 
 	return nil
-}
-
-func (r *reading) Channel() chan model.Reading {
-	return r.readings
 }

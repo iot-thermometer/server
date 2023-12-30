@@ -11,6 +11,7 @@ type Repositories interface {
 	Ownership() Ownership
 	Device() Device
 	Reading() Reading
+	Alert() Alert
 }
 
 type repositories struct {
@@ -18,6 +19,7 @@ type repositories struct {
 	ownershipRepository Ownership
 	deviceRepository    Device
 	readingRepository   Reading
+	alertRepository     Alert
 }
 
 func NewRepositories(db *gorm.DB) Repositories {
@@ -46,11 +48,13 @@ func NewRepositories(db *gorm.DB) Repositories {
 	ownershipRepository := newOwnershipRepository(db)
 	deviceRepository := newDeviceRepository(db)
 	readingRepository := newReadingRepository(db)
+	alertRepository := newAlertRepository(db)
 	return &repositories{
 		userRepository:      userRepository,
 		ownershipRepository: ownershipRepository,
 		deviceRepository:    deviceRepository,
 		readingRepository:   readingRepository,
+		alertRepository:     alertRepository,
 	}
 }
 
@@ -68,4 +72,8 @@ func (r repositories) Device() Device {
 
 func (r repositories) Reading() Reading {
 	return r.readingRepository
+}
+
+func (r repositories) Alert() Alert {
+	return r.alertRepository
 }
