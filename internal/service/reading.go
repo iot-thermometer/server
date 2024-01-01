@@ -66,7 +66,8 @@ func (r reading) Handle(message mqtt.Message) error {
 	if err != nil {
 		return err
 	}
-	device.RecentlySeenAt = time.Now()
+	now := time.Now()
+	device.RecentlySeenAt = &now
 	_, err = r.deviceRepository.Save(device)
 	if err != nil {
 		return err
