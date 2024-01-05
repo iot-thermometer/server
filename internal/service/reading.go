@@ -56,6 +56,9 @@ func (r reading) List(userID, deviceID uint, start, end time.Time) ([]model.Read
 
 func (r reading) Handle(message mqtt.Message) error {
 	payloadString := message.Payload()
+	if strings.HasPrefix(string(payloadString), "XDEBUG") {
+		return nil
+	}
 	parts := strings.Split(string(payloadString), ";")
 
 	deviceID, err := strconv.Atoi(parts[0])
