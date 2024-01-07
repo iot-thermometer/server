@@ -25,6 +25,7 @@ require (
 	cloud.google.com/go/storage v1.36.0 // indirect
 	firebase.google.com/go v3.13.0+incompatible // indirect
 	github.com/andreburgaud/crypt2go v1.4.0 // indirect
+	github.com/aws/aws-sdk-go v1.49.16 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/go-logr/logr v1.3.0 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect

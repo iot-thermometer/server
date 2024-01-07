@@ -3,6 +3,7 @@ package procedure
 import (
 	"context"
 	"fmt"
+	"github.com/aws/aws-sdk-go/aws"
 
 	"github.com/iot-thermometer/server/gen"
 	"github.com/iot-thermometer/server/internal/dto"
@@ -47,20 +48,14 @@ func (d deviceProcedure) GetDevices(ctx context.Context, request *gen.ListDevice
 
 	var pbDevices []*gen.Device
 	for _, device := range devices {
-		fmt.Println(device.ID, device.Name)
-		fmt.Println(device.ID, device.Token)
 		pbDevices = append(pbDevices, &gen.Device{
 			Id:              util.Uint64(uint64(device.ID)),
-			Name:            str(device.Name),
+			Name:            aws.String(device.Name),
 			RecentlySeenAt:  util.Int64(device.RecentlySeenAt.Unix()),
-			Token:           str(device.Token),
+			Token:           aws.String(device.Token),
 			ReadingInterval: util.Int64(int64(device.ReadingInterval)),
 			PushInterval:    util.Int64(int64(device.PushInterval)),
 		})
-	}
-	for _, device := range pbDevices {
-		fmt.Println("DE", device.Id, device.Name)
-		fmt.Println("DE", device.Id, device.Token)
 	}
 	return &gen.ListDevicesResponse{
 		Devices: pbDevices,
@@ -143,8 +138,4 @@ func (d deviceProcedure) DeleteDevice(ctx context.Context, request *gen.DeleteDe
 		return nil, err
 	}
 	return &gen.DeleteDeviceResponse{}, nil
-}
-
-func str(v string) *string {
-	return &v
 }
