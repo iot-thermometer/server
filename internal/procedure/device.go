@@ -47,6 +47,7 @@ func (d deviceProcedure) GetDevices(ctx context.Context, request *gen.ListDevice
 
 	var pbDevices []*gen.Device
 	for _, device := range devices {
+		fmt.Println(device.ID, device.Name)
 		pbDevices = append(pbDevices, &gen.Device{
 			Id:              util.Uint64(uint64(device.ID)),
 			Name:            &device.Name,
