@@ -3,6 +3,7 @@ package procedure
 import (
 	"context"
 	"fmt"
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/iot-thermometer/server/gen"
 	"github.com/iot-thermometer/server/internal/dto"
 	"github.com/iot-thermometer/server/internal/service"
@@ -42,7 +43,7 @@ func (a alert) List(ctx context.Context, request *gen.ListAlertsRequest) (*gen.L
 	for _, alert := range alerts {
 		pbAlerts = append(pbAlerts, &gen.Alert{
 			Id:              util.Uint64(uint64(alert.ID)),
-			Name:            &alert.AlertName,
+			Name:            aws.String(alert.AlertName),
 			UserID:          util.Uint64(uint64(alert.UserID)),
 			DeviceID:        util.Uint64(uint64(alert.DeviceID)),
 			SoilMoistureMin: util.Float32(float32(alert.SoilMoistureMin)),
@@ -78,7 +79,7 @@ func (a alert) Create(ctx context.Context, request *gen.CreateAlertRequest) (*ge
 	}
 	return &gen.CreateAlertResponse{Alert: &gen.Alert{
 		Id:              util.Uint64(uint64(alert.ID)),
-		Name:            &alert.AlertName,
+		Name:            aws.String(alert.AlertName),
 		UserID:          util.Uint64(uint64(alert.UserID)),
 		DeviceID:        util.Uint64(uint64(alert.DeviceID)),
 		SoilMoistureMin: util.Float32(float32(alert.SoilMoistureMin)),
@@ -111,7 +112,7 @@ func (a alert) Update(ctx context.Context, request *gen.UpdateAlertRequest) (*ge
 	}
 	return &gen.UpdateAlertResponse{Alert: &gen.Alert{
 		Id:              util.Uint64(uint64(alert.ID)),
-		Name:            &alert.AlertName,
+		Name:            aws.String(alert.AlertName),
 		UserID:          util.Uint64(uint64(alert.UserID)),
 		DeviceID:        util.Uint64(uint64(alert.DeviceID)),
 		SoilMoistureMin: util.Float32(float32(alert.SoilMoistureMin)),

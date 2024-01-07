@@ -83,9 +83,9 @@ func (d deviceProcedure) AddDevice(ctx context.Context, request *gen.CreateDevic
 	return &gen.CreateDeviceResponse{
 		Device: &gen.Device{
 			Id:              util.Uint64(uint64(device.ID)),
-			Name:            &device.Name,
+			Name:            aws.String(device.Name),
 			RecentlySeenAt:  util.Int64(device.RecentlySeenAt.Unix()),
-			Token:           &device.Token,
+			Token:           aws.String(device.Token),
 			ReadingInterval: util.Int64(int64(device.ReadingInterval)),
 			PushInterval:    util.Int64(int64(device.PushInterval)),
 		},
@@ -114,9 +114,9 @@ func (d deviceProcedure) UpdateDevice(ctx context.Context, request *gen.UpdateDe
 	return &gen.UpdateDeviceResponse{
 		Device: &gen.Device{
 			Id:              util.Uint64(uint64(device.ID)),
-			Name:            &device.Name,
+			Name:            aws.String(device.Name),
 			RecentlySeenAt:  util.Int64(device.RecentlySeenAt.Unix()),
-			Token:           &device.Token,
+			Token:           aws.String(device.Token),
 			ReadingInterval: util.Int64(int64(device.ReadingInterval)),
 			PushInterval:    util.Int64(int64(device.PushInterval)),
 		},
