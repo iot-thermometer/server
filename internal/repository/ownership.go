@@ -9,6 +9,8 @@ import (
 
 type Ownership interface {
 	FindByUserID(userID uint) ([]model.Ownership, error)
+	FindByDeviceID(deviceID uint) ([]model.Ownership, error)
+	Find(userID uint, deviceID uint) (model.Ownership, error)
 	Create(userID uint, deviceID uint, role model.OwnershipRole) (model.Ownership, error)
 	Exists(userID uint, deviceID uint) (bool, error)
 	Delete(userID uint, deviceID uint) error
@@ -31,6 +33,24 @@ func (o ownership) FindByUserID(userID uint) ([]model.Ownership, error) {
 		return nil, result.Error
 	}
 	return ownerships, nil
+}
+
+func (o ownership) FindByDeviceID(deviceID uint) ([]model.Ownership, error) {
+	var ownerships []model.Ownership
+	result := o.db.Where("device_id = ?", deviceID).Find(&ownerships)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return ownerships, nil
+}
+
+func (o ownership) Find(userID uint, deviceID uint) (model.Ownership, error) {
+	var ownership model.Ownership
+	result := o.db.Where("user_id = ? AND device_id = ?", userID, deviceID).First(&ownership)
+	if result.Error != nil {
+		return model.Ownership{}, result.Error
+	}
+	return ownership, nil
 }
 
 func (o ownership) Create(userID uint, deviceID uint, role model.OwnershipRole) (model.Ownership, error) {

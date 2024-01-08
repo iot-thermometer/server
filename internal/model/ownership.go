@@ -7,6 +7,7 @@ type Ownership struct {
 	UserID   uint
 	DeviceID uint
 	Role     OwnershipRole
+	User     User `gorm:"-"`
 }
 
 type OwnershipRole int

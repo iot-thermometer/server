@@ -7,6 +7,7 @@ import (
 
 type Services interface {
 	User() User
+	Ownership() Ownership
 	Device() Device
 	Reading() Reading
 	Alert() Alert
@@ -14,30 +15,37 @@ type Services interface {
 }
 
 type services struct {
-	userService    User
-	deviceService  Device
-	readingService Reading
-	alertService   Alert
-	phoneService   Phone
+	userService      User
+	ownershipService Ownership
+	deviceService    Device
+	readingService   Reading
+	alertService     Alert
+	phoneService     Phone
 }
 
 func NewServices(repositories repository.Repositories, config dto.Config) Services {
 	userService := newUserService(repositories.User(), config)
+	ownershipService := newOwnershipService(repositories.Ownership(), repositories.User())
 	deviceService := newDeviceService(repositories.Ownership(), repositories.Device())
 	alertService := newAlertService(repositories.Alert(), repositories.Phone())
 	readingService := newReadingService(userService, deviceService, alertService, repositories.Device(), repositories.Reading())
 	phoneService := newPhoneService(repositories.Phone())
 	return &services{
-		userService:    userService,
-		deviceService:  deviceService,
-		readingService: readingService,
-		alertService:   alertService,
-		phoneService:   phoneService,
+		userService:      userService,
+		ownershipService: ownershipService,
+		deviceService:    deviceService,
+		readingService:   readingService,
+		alertService:     alertService,
+		phoneService:     phoneService,
 	}
 }
 
 func (s services) User() User {
 	return s.userService
+}
+
+func (s services) Ownership() Ownership {
+	return s.ownershipService
 }
 
 func (s services) Device() Device {

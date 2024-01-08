@@ -2,17 +2,19 @@ package procedure
 
 import (
 	"context"
+
 	"github.com/iot-thermometer/server/gen"
 )
 
 type server struct {
 	gen.UnimplementedThermometerServiceServer
 
-	userProcedure    User
-	deviceProcedure  Device
-	readingProcedure Reading
-	alertProcedure   Alert
-	phoneProcedure   Phone
+	userProcedure      User
+	ownershipProcedure Ownership
+	deviceProcedure    Device
+	readingProcedure   Reading
+	alertProcedure     Alert
+	phoneProcedure     Phone
 }
 
 func (s server) Login(ctx context.Context, request *gen.LoginRequest) (*gen.LoginResponse, error) {
@@ -65,4 +67,14 @@ func (s server) AddPhone(ctx context.Context, request *gen.AddPhoneRequest) (*ge
 
 func (s server) RemovePhone(ctx context.Context, request *gen.RemovePhoneRequest) (*gen.RemovePhoneResponse, error) {
 	return s.phoneProcedure.Remove(ctx, request)
+}
+
+func (s server) AddMember(ctx context.Context, request *gen.AddMemberRequest) (*gen.AddMemberResponse, error) {
+	return s.ownershipProcedure.AddMember(ctx, request)
+}
+func (s server) ListMembers(ctx context.Context, request *gen.ListMembersRequest) (*gen.ListMembersResponse, error) {
+	return s.ownershipProcedure.ListMembers(ctx, request)
+}
+func (s server) RemoveMember(ctx context.Context, request *gen.RemoveMemberRequest) (*gen.RemoveMemberResponse, error) {
+	return s.ownershipProcedure.RemoveMember(ctx, request)
 }

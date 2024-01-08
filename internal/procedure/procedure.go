@@ -16,17 +16,19 @@ type Procedures interface {
 }
 
 type procedures struct {
-	userProcedure    User
-	deviceProcedure  Device
-	readingProcedure Reading
-	alertProcedure   Alert
-	phoneProcedure   Phone
+	userProcedure      User
+	ownershipProcedure Ownership
+	deviceProcedure    Device
+	readingProcedure   Reading
+	alertProcedure     Alert
+	phoneProcedure     Phone
 
 	grpcServer *grpc.Server
 }
 
 func NewProcedures(services service.Services) Procedures {
 	userProcedure := newUserProcedure(services.User())
+	ownershipProcedure := newOwnershipProcedure(services.Ownership(), services.User())
 	deviceProcedure := newDeviceProcedure(services.Device(), services.User())
 	readingProcedure := newReadingProcedure(services.Reading(), services.User())
 	alertProcedure := newAlertProcedure(services.Alert(), services.User())
@@ -37,20 +39,22 @@ func NewProcedures(services service.Services) Procedures {
 	}
 	grpcServer := grpc.NewServer(grpc.Creds(credentials.NewServerTLSFromCert(&grpcCredentials)))
 	s := &server{
-		userProcedure:    userProcedure,
-		deviceProcedure:  deviceProcedure,
-		readingProcedure: readingProcedure,
-		alertProcedure:   alertProcedure,
-		phoneProcedure:   phoneProcedure,
+		userProcedure:      userProcedure,
+		ownershipProcedure: ownershipProcedure,
+		deviceProcedure:    deviceProcedure,
+		readingProcedure:   readingProcedure,
+		alertProcedure:     alertProcedure,
+		phoneProcedure:     phoneProcedure,
 	}
 	gen.RegisterThermometerServiceServer(grpcServer, s)
 	return &procedures{
-		userProcedure:    userProcedure,
-		deviceProcedure:  deviceProcedure,
-		readingProcedure: readingProcedure,
-		alertProcedure:   alertProcedure,
-		phoneProcedure:   phoneProcedure,
-		grpcServer:       grpcServer,
+		userProcedure:      userProcedure,
+		ownershipProcedure: ownershipProcedure,
+		deviceProcedure:    deviceProcedure,
+		readingProcedure:   readingProcedure,
+		alertProcedure:     alertProcedure,
+		phoneProcedure:     phoneProcedure,
+		grpcServer:         grpcServer,
 	}
 }
 
