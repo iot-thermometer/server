@@ -23,7 +23,7 @@ func newBroker(config dto.Config) Broker {
 	return &broker{config: config}
 }
 
-func (b broker) Connect(callback MessageCallback) error {
+func (b *broker) Connect(callback MessageCallback) error {
 	opts := mqtt.NewClientOptions().AddBroker(b.config.Broker).SetClientID("server")
 	opts.SetKeepAlive(60 * time.Second)
 	opts.SetDefaultPublishHandler(func(client mqtt.Client, message mqtt.Message) {
@@ -42,7 +42,7 @@ func (b broker) Connect(callback MessageCallback) error {
 	return nil
 }
 
-func (b broker) Subscribe(topic string) error {
+func (b *broker) Subscribe(topic string) error {
 	if token := b.client.Subscribe(topic, 0, nil); token.Wait() && token.Error() != nil {
 		return token.Error()
 	}
