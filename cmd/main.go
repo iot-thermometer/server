@@ -63,6 +63,10 @@ func main() {
 	if err != nil {
 		logrus.Panic(err)
 	}
+	err = services.Device().Watch()
+	if err != nil {
+		logrus.Panic(err)
+	}
 
 	go func() {
 		grpcPort := os.Getenv("GRPC_PORT")

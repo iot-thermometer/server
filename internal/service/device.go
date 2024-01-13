@@ -18,6 +18,7 @@ type Device interface {
 	Owns(userID uint, deviceID uint) (bool, error)
 
 	Get(token string) (model.Device, error)
+	Watch() error
 }
 
 type device struct {
@@ -117,12 +118,7 @@ func (d device) watch(device model.Device) error {
 	return nil
 }
 
-func newDeviceService(ownershipRepository repository.Ownership, deviceRepository repository.Device, broker client.Broker) Device {
-	d := &device{
-		ownershipRepository: ownershipRepository,
-		deviceRepository:    deviceRepository,
-		broker:              broker,
-	}
+func (d device) Watch() error {
 	devices, err := d.deviceRepository.GetAll()
 	if err != nil {
 		panic(err)
@@ -133,5 +129,13 @@ func newDeviceService(ownershipRepository repository.Ownership, deviceRepository
 			panic(err)
 		}
 	}
-	return d
+	return nil
+}
+
+func newDeviceService(ownershipRepository repository.Ownership, deviceRepository repository.Device, broker client.Broker) Device {
+	return &device{
+		ownershipRepository: ownershipRepository,
+		deviceRepository:    deviceRepository,
+		broker:              broker,
+	}
 }
