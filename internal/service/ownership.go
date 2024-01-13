@@ -6,7 +6,7 @@ import (
 )
 
 type Ownership interface {
-	ListMembers(requesterID, deviceID uint) ([]model.Ownership, error)
+	ListMembers(requesterID, deviceID uint) ([]*model.Ownership, error)
 	AddMember(requesterID, deviceID uint, email string, role model.OwnershipRole) error
 	RemoveMember(requesterID, deviceID uint, userID uint) error
 }
@@ -41,7 +41,7 @@ func (o *ownership) AddMember(requesterID, deviceID uint, email string, role mod
 	return err
 }
 
-func (o *ownership) ListMembers(requesterID, deviceID uint) ([]model.Ownership, error) {
+func (o *ownership) ListMembers(requesterID, deviceID uint) ([]*model.Ownership, error) {
 	ownerships, err := o.ownershipRepository.FindByDeviceID(deviceID)
 	if err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func (o *ownership) ListMembers(requesterID, deviceID uint) ([]model.Ownership, 
 		if err != nil {
 			return nil, err
 		}
-		ownership.User = user
+		ownership.User = &user
 	}
 	return ownerships, nil
 }

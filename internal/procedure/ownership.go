@@ -62,7 +62,6 @@ func (o ownership) ListMembers(ctx context.Context, request *gen.ListMembersRequ
 
 	var pbOwnerships []*gen.Ownership
 	for _, ownership := range ownerships {
-		fmt.Println(ownership.User.Email)
 		pbOwnership := &gen.Ownership{
 			DeviceID: int64(ownership.DeviceID),
 			UserID:   int64(ownership.UserID),
