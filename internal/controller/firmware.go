@@ -17,9 +17,9 @@ func newFirmware() Firmware {
 }
 
 func (f firmware) Index(c echo.Context) error {
-	return c.File("version.json")
+	return c.File("/firmware/version.json")
 }
 
 func (f firmware) Download(c echo.Context) error {
-	return c.File("iot.bin")
+	return c.File("/firmware/iot.bin")
 }

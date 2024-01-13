@@ -12,6 +12,7 @@ services:
         condition: service_healthy
     volumes:
       - ./credentials.json:/credentials/credentials.json
+      - ./firmware:/firmware
     ports:
       - "3009:3000"
       - "3010:3001"
