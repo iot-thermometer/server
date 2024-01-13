@@ -53,13 +53,13 @@ func main() {
 
 	clients := client.NewClients(config)
 	repositories := repository.NewRepositories(db)
-	services := service.NewServices(repositories, config)
+	services := service.NewServices(repositories, config, clients)
 	controllers := controller.NewControllers(services)
 	controllers.Route(e)
 
 	procedures := procedure.NewProcedures(services)
 
-	err = clients.Broker().Connect("sensors", services.Reading().Handle)
+	err = clients.Broker().Connect(services.Reading().Handle)
 	if err != nil {
 		logrus.Panic(err)
 	}

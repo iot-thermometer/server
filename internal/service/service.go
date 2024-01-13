@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/iot-thermometer/server/internal/client"
 	"github.com/iot-thermometer/server/internal/dto"
 	"github.com/iot-thermometer/server/internal/repository"
 )
@@ -23,10 +24,10 @@ type services struct {
 	phoneService     Phone
 }
 
-func NewServices(repositories repository.Repositories, config dto.Config) Services {
+func NewServices(repositories repository.Repositories, config dto.Config, clients client.Clients) Services {
 	userService := newUserService(repositories.User(), config)
 	ownershipService := newOwnershipService(repositories.Ownership(), repositories.User())
-	deviceService := newDeviceService(repositories.Ownership(), repositories.Device())
+	deviceService := newDeviceService(repositories.Ownership(), repositories.Device(), clients.Broker())
 	alertService := newAlertService(repositories.Alert(), repositories.Phone())
 	readingService := newReadingService(userService, deviceService, alertService, repositories.Device(), repositories.Reading())
 	phoneService := newPhoneService(repositories.Phone())

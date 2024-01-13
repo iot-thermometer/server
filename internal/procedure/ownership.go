@@ -3,9 +3,9 @@ package procedure
 import (
 	"context"
 	"fmt"
+	"github.com/iot-thermometer/server/internal/model"
 
 	"github.com/iot-thermometer/server/gen"
-	"github.com/iot-thermometer/server/internal/model"
 	"github.com/iot-thermometer/server/internal/service"
 	"google.golang.org/grpc/metadata"
 )
@@ -38,7 +38,8 @@ func (o ownership) AddMember(ctx context.Context, request *gen.AddMemberRequest)
 	if err != nil {
 		return nil, err
 	}
-	err = o.ownershipService.AddMember(userID, uint(request.DeviceID), request.Email, model.OwnershipRole(request.Role.Number()))
+	role := request.Role.Enum()
+	err = o.ownershipService.AddMember(userID, uint(request.DeviceID), request.Email, model.OwnershipRole(*role))
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +88,7 @@ func (o ownership) RemoveMember(ctx context.Context, request *gen.RemoveMemberRe
 	if err != nil {
 		return nil, err
 	}
-	err = o.ownershipService.RemoveMember(userID, uint(request.UserID), uint(request.DeviceID))
+	err = o.ownershipService.RemoveMember(userID, uint(request.DeviceID), uint(request.UserID))
 	if err != nil {
 		return nil, err
 	}

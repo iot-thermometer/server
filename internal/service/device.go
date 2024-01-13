@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"github.com/iot-thermometer/server/internal/client"
 
 	"github.com/iot-thermometer/server/internal/dto"
 	"github.com/iot-thermometer/server/internal/model"
@@ -22,6 +23,7 @@ type Device interface {
 type device struct {
 	ownershipRepository repository.Ownership
 	deviceRepository    repository.Device
+	broker              client.Broker
 }
 
 func (d device) List(userID uint) ([]model.Device, error) {
@@ -103,9 +105,33 @@ func (d device) Get(token string) (model.Device, error) {
 	return d.deviceRepository.GetByToken(token)
 }
 
-func newDeviceService(ownershipRepository repository.Ownership, deviceRepository repository.Device) Device {
-	return &device{
+func (d device) watch(device model.Device) error {
+	err := d.broker.Subscribe(fmt.Sprintf("sensors/%d/TEMP", device.ID))
+	if err != nil {
+		return nil
+	}
+	err = d.broker.Subscribe(fmt.Sprintf("sensors/%d/SOIL", device.ID))
+	if err != nil {
+		return nil
+	}
+	return nil
+}
+
+func newDeviceService(ownershipRepository repository.Ownership, deviceRepository repository.Device, broker client.Broker) Device {
+	d := &device{
 		ownershipRepository: ownershipRepository,
 		deviceRepository:    deviceRepository,
+		broker:              broker,
 	}
+	devices, err := d.deviceRepository.GetAll()
+	if err != nil {
+		panic(err)
+	}
+	for _, device := range devices {
+		err = d.watch(device)
+		if err != nil {
+			panic(err)
+		}
+	}
+	return d
 }
