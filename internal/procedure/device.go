@@ -48,10 +48,15 @@ func (d deviceProcedure) GetDevices(ctx context.Context, request *gen.ListDevice
 
 	var pbDevices []*gen.Device
 	for _, device := range devices {
+		var recentlySeenAt *int64
+		if device.RecentlySeenAt != nil {
+			recentlySeenAtInt := device.RecentlySeenAt.Unix()
+			recentlySeenAt = &recentlySeenAtInt
+		}
 		pbDevices = append(pbDevices, &gen.Device{
 			Id:              util.Uint64(uint64(device.ID)),
 			Name:            aws.String(device.Name),
-			RecentlySeenAt:  util.Int64(device.RecentlySeenAt.Unix()),
+			RecentlySeenAt:  recentlySeenAt,
 			Token:           aws.String(device.Token),
 			ReadingInterval: util.Int64(int64(device.ReadingInterval)),
 			PushInterval:    util.Int64(int64(device.PushInterval)),
@@ -80,11 +85,17 @@ func (d deviceProcedure) AddDevice(ctx context.Context, request *gen.CreateDevic
 	if err != nil {
 		return nil, err
 	}
+
+	var recentlySeenAt *int64
+	if device.RecentlySeenAt != nil {
+		recentlySeenAtInt := device.RecentlySeenAt.Unix()
+		recentlySeenAt = &recentlySeenAtInt
+	}
 	return &gen.CreateDeviceResponse{
 		Device: &gen.Device{
 			Id:              util.Uint64(uint64(device.ID)),
 			Name:            aws.String(device.Name),
-			RecentlySeenAt:  util.Int64(device.RecentlySeenAt.Unix()),
+			RecentlySeenAt:  recentlySeenAt,
 			Token:           aws.String(device.Token),
 			ReadingInterval: util.Int64(int64(device.ReadingInterval)),
 			PushInterval:    util.Int64(int64(device.PushInterval)),
@@ -111,11 +122,16 @@ func (d deviceProcedure) UpdateDevice(ctx context.Context, request *gen.UpdateDe
 		return nil, err
 	}
 
+	var recentlySeenAt *int64
+	if device.RecentlySeenAt != nil {
+		recentlySeenAtInt := device.RecentlySeenAt.Unix()
+		recentlySeenAt = &recentlySeenAtInt
+	}
 	return &gen.UpdateDeviceResponse{
 		Device: &gen.Device{
 			Id:              util.Uint64(uint64(device.ID)),
 			Name:            aws.String(device.Name),
-			RecentlySeenAt:  util.Int64(device.RecentlySeenAt.Unix()),
+			RecentlySeenAt:  recentlySeenAt,
 			Token:           aws.String(device.Token),
 			ReadingInterval: util.Int64(int64(device.ReadingInterval)),
 			PushInterval:    util.Int64(int64(device.PushInterval)),
