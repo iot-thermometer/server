@@ -67,6 +67,7 @@ func (o ownership) ListMembers(ctx context.Context, request *gen.ListMembersRequ
 			UserID:   int64(ownership.UserID),
 			Email:    ownership.User.Email,
 			Role:     gen.OwnershipRole(ownership.Role),
+			IsMe:     ownership.User.ID == userID,
 		}
 		pbOwnerships = append(pbOwnerships, pbOwnership)
 	}
