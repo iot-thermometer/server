@@ -105,6 +105,9 @@ func (r reading) Handle(message mqtt.Message) error {
 		MeasuredAt: time.Unix(msg.Time, 0),
 		UploadedAt: time.Now(),
 	}
+	if reading.MeasuredAt.IsZero() {
+		return nil
+	}
 	_, err = r.readingRepository.Create(reading)
 	if err != nil {
 		return err
