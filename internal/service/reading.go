@@ -114,7 +114,12 @@ func (r reading) Handle(message mqtt.Message) error {
 	}
 
 	logrus.Infof("Received reading %s with value %f", reading.Type, reading.Value)
-	go r.alertService.Check(reading)
+	go func() {
+		err := r.alertService.Check(reading)
+		if err != nil {
+			logrus.Error(err)
+		}
+	}()
 
 	return nil
 }
