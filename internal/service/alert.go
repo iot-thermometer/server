@@ -102,9 +102,13 @@ func (a alert) Check(reading model.Reading) error {
 
 	for _, alert := range alerts {
 		if alert.DeviceID == reading.DeviceID {
-			if reading.SoilMoisture > alert.SoilMoistureMin && reading.SoilMoisture < alert.SoilMoistureMax &&
-				reading.Temperature > alert.TemperatureMin && reading.Temperature < alert.TemperatureMax {
-
+			var send bool
+			if reading.Type == "TEMPERATURE" {
+				send = reading.Value > alert.TemperatureMin && reading.Value < alert.TemperatureMax
+			} else if reading.Type == "SOIL_MOISTURE" {
+				send = reading.Value > alert.SoilMoistureMin && reading.Value < alert.SoilMoistureMax
+			}
+			if send {
 				phones, err := a.phoneRepository.List(alert.UserID)
 				if err != nil {
 					return err

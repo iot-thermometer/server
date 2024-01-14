@@ -99,12 +99,11 @@ func (r reading) Handle(message mqtt.Message) error {
 	}
 
 	reading := model.Reading{
-		DeviceID:     msg.DeviceID,
-		SoilMoisture: msg.SoilMoisture,
-		Temperature:  msg.Temperature,
-		Other:        msg.Other,
-		MeasuredAt:   time.Unix(msg.Time, 0),
-		UploadedAt:   time.Now(),
+		DeviceID:   msg.DeviceID,
+		Value:      msg.Value,
+		Type:       msg.Type,
+		MeasuredAt: time.Unix(msg.Time, 0),
+		UploadedAt: time.Now(),
 	}
 	_, err = r.readingRepository.Create(reading)
 	if err != nil {
