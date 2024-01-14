@@ -38,8 +38,7 @@ func (o ownership) AddMember(ctx context.Context, request *gen.AddMemberRequest)
 	if err != nil {
 		return nil, err
 	}
-	role := request.Role.Enum()
-	err = o.ownershipService.AddMember(userID, uint(request.DeviceID), request.Email, model.OwnershipRole(*role))
+	err = o.ownershipService.AddMember(userID, uint(request.DeviceID), request.Email, model.OwnershipRole(int(request.Role)))
 	if err != nil {
 		return nil, err
 	}
