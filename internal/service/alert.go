@@ -133,14 +133,16 @@ func (a alert) Check(reading model.Reading) error {
 						Token: phone.FirebasePushToken,
 					})
 					if err != nil {
-						return err
+						logrus.Errorf("Error sending notification: %s", err)
+					} else {
+						alert.LastSentAt = time.Now()
+						_, err = a.alertRepository.Save(alert)
+						if err != nil {
+							return err
+						}
 					}
 				}
-				alert.LastSentAt = time.Now()
-				_, err = a.alertRepository.Save(alert)
-				if err != nil {
-					return err
-				}
+
 			}
 		}
 	}
