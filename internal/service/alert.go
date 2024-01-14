@@ -109,6 +109,7 @@ func (a alert) Check(reading model.Reading) error {
 				send = reading.Value > alert.SoilMoistureMin && reading.Value < alert.SoilMoistureMax
 			}
 			if send {
+				logrus.Infof("Sending notification to %d", alert.UserID)
 				phones, err := a.phoneRepository.List(alert.UserID)
 				if err != nil {
 					return err
