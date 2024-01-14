@@ -4,12 +4,14 @@ import (
 	"context"
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/messaging"
+	"fmt"
 	"github.com/iot-thermometer/server/internal/dto"
 	"github.com/iot-thermometer/server/internal/model"
 	"github.com/iot-thermometer/server/internal/repository"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/api/option"
 	"os"
+	"time"
 )
 
 type Alert interface {
@@ -108,7 +110,7 @@ func (a alert) Check(reading model.Reading) error {
 			} else if reading.Type == "SOIL_MOISTURE" {
 				send = reading.Value > alert.SoilMoistureMin && reading.Value < alert.SoilMoistureMax
 			}
-			if send {
+			if send && alert.LastSentAt.Add(3*time.Hour).Before(time.Now()) {
 				logrus.Infof("Sending notification to %d", alert.UserID)
 				phones, err := a.phoneRepository.List(alert.UserID)
 				if err != nil {
@@ -116,16 +118,28 @@ func (a alert) Check(reading model.Reading) error {
 				}
 				for _, phone := range phones {
 					logrus.Infof("Sending notification to %s", phone.FirebasePushToken)
+
+					var label string
+					if reading.Type == "TEMPERATURE" {
+						label = fmt.Sprintf("Temperatura jest między %f a %f - obecnie %f", alert.TemperatureMin, alert.TemperatureMax, reading.Value)
+					} else if reading.Type == "SOIL_MOISTURE" {
+						label = fmt.Sprintf("Wilgotność gleby jest między %f a %f - obecnie %f", alert.SoilMoistureMin, alert.SoilMoistureMax, reading.Value)
+					}
 					_, err = a.messaging.Send(context.Background(), &messaging.Message{
 						Notification: &messaging.Notification{
-							Title: "Alert",
-							Body:  "Your plant needs water",
+							Title: "Alert ze szklarni",
+							Body:  label,
 						},
 						Token: phone.FirebasePushToken,
 					})
 					if err != nil {
 						return err
 					}
+				}
+				alert.LastSentAt = time.Now()
+				_, err = a.alertRepository.Save(alert)
+				if err != nil {
+					return err
 				}
 			}
 		}
