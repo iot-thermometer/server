@@ -110,7 +110,7 @@ func (r reading) Handle(message mqtt.Message) error {
 		return err
 	}
 
-	logrus.Info("Received reading: ", reading)
+	logrus.Infof("Received reading %s wuth value %f", reading.Type, reading.Value)
 	go r.alertService.Check(reading)
 
 	return nil
