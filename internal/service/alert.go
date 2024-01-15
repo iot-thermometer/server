@@ -105,11 +105,27 @@ func (a alert) Check(reading model.Reading) error {
 	for _, alert := range alerts {
 		if alert.DeviceID == reading.DeviceID {
 			var send bool
+			var l, h float64
 			if reading.Type == "TEMPERATURE" {
-				send = reading.Value > alert.TemperatureMin && reading.Value < alert.TemperatureMax
+				l = alert.TemperatureMin
+				h = alert.TemperatureMax
 			} else if reading.Type == "SOIL_MOISTURE" {
-				send = reading.Value > alert.SoilMoistureMin && reading.Value < alert.SoilMoistureMax
+				l = alert.SoilMoistureMin
+				h = alert.SoilMoistureMax
 			}
+			lower := false
+			if l > -999 {
+				lower = l < reading.Value
+			} else {
+				lower = true
+			}
+			higher := false
+			if h < 999 {
+				higher = h > reading.Value
+			} else {
+				higher = true
+			}
+			send = lower && higher
 			if send && alert.LastSentAt.Add(3*time.Hour).Before(time.Now()) {
 				logrus.Infof("Sending notification to %d", alert.UserID)
 				phones, err := a.phoneRepository.List(alert.UserID)
@@ -118,12 +134,11 @@ func (a alert) Check(reading model.Reading) error {
 				}
 				for _, phone := range phones {
 					logrus.Infof("Sending notification to %s", phone.FirebasePushToken)
-
 					var label string
 					if reading.Type == "TEMPERATURE" {
-						label = fmt.Sprintf("Temperatura jest między %f a %f - obecnie %f", alert.TemperatureMin, alert.TemperatureMax, reading.Value)
+						label = fmt.Sprintf("Temperatura wynosi obecnie %f", reading.Value)
 					} else if reading.Type == "SOIL_MOISTURE" {
-						label = fmt.Sprintf("Wilgotność gleby jest między %f a %f - obecnie %f", alert.SoilMoistureMin, alert.SoilMoistureMax, reading.Value)
+						label = fmt.Sprintf("Wilgotność gleby wynosi obecnie obecnie %f", reading.Value)
 					}
 					_, err = a.messaging.Send(context.Background(), &messaging.Message{
 						Notification: &messaging.Notification{
