@@ -58,6 +58,11 @@ func (d device) Create(userID uint, payload dto.CreateDeviceRequest) (model.Devi
 	if err != nil {
 		return model.Device{}, err
 	}
+	err = d.watch(result)
+	if err != nil {
+		return model.Device{}, err
+	}
+
 	return result, nil
 }
 

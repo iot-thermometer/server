@@ -126,6 +126,9 @@ func (a alert) Check(reading model.Reading) error {
 				higher = true
 			}
 			send = lower && higher
+			if l < -999 && h > 999 {
+				send = false
+			}
 			if send && alert.LastSentAt.Add(3*time.Hour).Before(time.Now()) {
 				logrus.Infof("Sending notification to %d", alert.UserID)
 				phones, err := a.phoneRepository.List(alert.UserID)
@@ -136,9 +139,9 @@ func (a alert) Check(reading model.Reading) error {
 					logrus.Infof("Sending notification to %s", phone.FirebasePushToken)
 					var label string
 					if reading.Type == "TEMPERATURE" {
-						label = fmt.Sprintf("Temperatura wynosi obecnie %f", reading.Value)
+						label = fmt.Sprintf("Temperatura wynosi obecnie %d", int(reading.Value))
 					} else if reading.Type == "SOIL_MOISTURE" {
-						label = fmt.Sprintf("Wilgotność gleby wynosi obecnie obecnie %f", reading.Value)
+						label = fmt.Sprintf("Wilgotność gleby wynosi obecnie obecnie %d", int(reading.Value))
 					}
 					_, err = a.messaging.Send(context.Background(), &messaging.Message{
 						Notification: &messaging.Notification{
